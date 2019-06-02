@@ -80,9 +80,17 @@ player.appendChild(document.createElement('div'));
 
 function run(){
     let arrayImg = [];
-    document.getElementById('root').childNodes.forEach((item)=>{arrayImg.push(item.firstChild)});
+    document.getElementById('root').childNodes.forEach((item)=>{
 
-    let fps = 5;
+        let image = new Image;
+
+        image.src=item.firstChild.toDataURL("image/png");
+        console.log(arrayImg);
+        arrayImg.push(image);
+    });
+
+    console.log(arrayImg);
+    let fps = 8;
     let length = arrayImg.length;
     let i=0;
 
