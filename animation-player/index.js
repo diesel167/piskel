@@ -59,9 +59,39 @@ function adding(){
         paint=false;
     };
 
-    document.getElementById('root').appendChild(canvas);
+
+    let buttonDelete = document.createElement('button');
+    buttonDelete.setAttribute('width', '20');
+    buttonDelete.setAttribute('height', '10');
+    buttonDelete.innerText='delete';
+    buttonDelete.onclick=function(){
+        this.parentNode.remove();
+    };
+
+    let temp = document.createElement('div');
+    temp.appendChild(canvas);
+    temp.appendChild(buttonDelete);
+
+    document.getElementById('root').appendChild(temp);
 }
 
+let player = document.getElementById('player');
+player.appendChild(document.createElement('div'));
 
+function run(){
+    let arrayImg = [];
+    document.getElementById('root').childNodes.forEach((item)=>{arrayImg.push(item.firstChild)});
 
+    let fps = 5;
+    let length = arrayImg.length;
+    let i=0;
+
+    let timer = setInterval(function (){
+        player.children[0].innerHTML='';
+        console.log(player);
+        player.children[0].appendChild(arrayImg[i%length]);
+        i++;
+    },1000 / fps);
+
+}
 
