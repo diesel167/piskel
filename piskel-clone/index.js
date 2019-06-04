@@ -1,56 +1,54 @@
-let number = 0;
+let number = 0;  //ID of next canvas
 adding();
+let tooltype = 'draw';
 
-function adding(){
+function adding(old){
     let canvas = document.createElement('canvas');
     canvas.setAttribute('width', '128');
     canvas.setAttribute('height', '128');
     canvas.setAttribute('id', String('canvas' + number));
     number++;
-    let context = canvas.getContext("2d");
-    let clickX = [];
-    let clickY = [];
-    let clickDrag = [];
+    
+    let ctx = canvas.getContext("2d");
     let paint=false;
+    let last_mousex = 0;
+    let last_mousey = 0;
     
-    function addClick(x, y, dragging){
-        clickX.push(x);
-        clickY.push(y);
-        clickDrag.push(dragging);
+    
+    if(old){
+        //apply the old canvas to the new one
+        ctx.drawImage(old, 0, 0);
+        canvas.setAttribute('width', old.width);
+        canvas.setAttribute('height', old.height);
     }
     
-    function redraw(){
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-        context.strokeStyle = "#df4b26";
-        context.lineJoin = "round";
-        context.lineWidth = 5;
-        for(let i=0; i < clickX.length; i++) {
-            context.beginPath();
-            if(clickDrag[i] && i){
-                context.moveTo(clickX[i-1], clickY[i-1]);
-            }else{
-                context.moveTo(clickX[i]-1, clickY[i]);
-            }
-            context.lineTo(clickX[i], clickY[i]);
-            context.closePath();
-            context.stroke();
-        }
-    }
     
     canvas.onmousedown=function(e){
-        let mouseX = e.pageX - this.offsetLeft;
-        let mouseY = e.pageY - this.offsetTop;
         paint=true;
-        addClick(mouseX, mouseY, false);
-        redraw();
     };
+    
     canvas.onmousemove=function(e){
-        if(paint){
-            addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
-            
-            redraw();
+        let mousex = parseInt(e.clientX-this.offsetLeft);
+        let mousey = parseInt(e.clientY-this.offsetTop);
+        if(paint) {
+            ctx.beginPath();
+            if(tooltype==='draw') {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 5;
+            } else {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.lineWidth = 10;
+            }
+            ctx.moveTo(last_mousex,last_mousey);
+            ctx.lineTo(mousex,mousey);
+            ctx.lineJoin = ctx.lineCap = 'round';
+            ctx.stroke();
         }
+        last_mousex = mousex;
+        last_mousey = mousey;
     };
+    
     canvas.onmouseup=()=>{
         paint=false;
     };
@@ -68,9 +66,20 @@ function adding(){
         this.parentNode.remove();
     };
     
+    
+    let buttonClone = document.createElement('button');
+    buttonClone.setAttribute('width', '20');
+    buttonClone.setAttribute('height', '10');
+    buttonClone.innerText='clone';
+    buttonClone.onclick = function(){
+        adding(this.parentNode.children[0]);
+    };
+    
+    
     let temp = document.createElement('div');
     temp.appendChild(canvas);
     temp.appendChild(buttonDelete);
+    temp.appendChild(buttonClone);
     
     document.getElementById('root').appendChild(temp);
 }
@@ -78,14 +87,20 @@ function adding(){
 let player = document.getElementById('player');
 player.appendChild(document.createElement('div'));
 
-function run(playing){
+
+/*___________________________________________________________*/
+
+//RUN---STOP ANIMATION
+
+let timer;
+function run(){
+    stop();
     let arrayImg = [];
     document.getElementById('root').childNodes.forEach((item)=>{
         
         let image = new Image;
         
         image.src=item.firstChild.toDataURL("image/png");
-        console.log(arrayImg);
         arrayImg.push(image);
     });
     
@@ -95,17 +110,28 @@ function run(playing){
     let i=0;
     
     
-    let timer = setInterval(function (){
+    timer = setInterval(function (){
         player.children[0].innerHTML='';
-        console.log(player);
         player.children[0].appendChild(arrayImg[i%length]);
         i++;
     },1000 / fps);
- 
+
     
 }
 
 function stop(){
+    clearInterval(timer);
     player.children[0].innerHTML='';
-    
 }
+/*___________________________________________________________*/
+
+
+
+
+/*___________________________________________________________*/
+//CHOOSE TOOL
+
+function use_tool (tool) {
+    tooltype = tool; //update
+}
+/*___________________________________________________________*/
