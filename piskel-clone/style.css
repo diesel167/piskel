@@ -1,0 +1,137 @@
+*{
+    box-sizing: border-box;
+    outline: none;
+    user-select: none;
+}
+
+body{
+    padding: 0;
+    margin: 0;
+    font-family: 'Maven Pro Regular', sans-serif;
+    color: #2b2b2b;
+}
+
+.header{
+    height: 30px;
+    width: 100%;
+    font-weight: bold;
+    padding-top: 5px;
+    box-shadow: 1px -1px 7px 2px black;
+    z-index: 100;
+}
+
+.header:before{
+    margin-left: 20px;
+    display: inline-block;
+    content: url(assets/images/Shape.png);
+    width: 68px;
+    height: 68px;
+    left: -14px;
+}
+
+.container{
+    width: 150px;
+    padding: 1%;
+    text-align: center;
+    display: inline-block;
+}
+
+.palette{
+    width: 20%;
+    margin: 20px;
+    display: inline-block;
+    vertical-align: top;
+    background-color: red;
+    box-shadow: 0 3px 6px -2px black;
+}
+
+.colors{
+    margin: 20px;
+    box-shadow: 0 3px 6px -2px black;
+}
+
+.canvas{
+    grid-area: canvas;
+    z-index: 100;
+    padding: 10% 10% 5% 25%;
+}
+
+.palette button {
+    display: block;
+    outline: 0 !important;
+    border: none;
+    background-color: white;
+    height: calc((100vh - 30px - 1vh - 80px)/8);
+    width: 100%;
+    line-height: 30px;
+    text-align: left;
+}
+
+
+.colors button {
+    display: block;
+    outline: 0 !important;
+    border: none;
+    background-color: white;
+    height: calc((100vh - 30px - 1vh - 80px)/8);
+    width: 100%;
+    line-height: 30px;
+    text-align: left;
+}
+
+button:hover{
+    background-color: #ffb1b6;
+    cursor:pointer;
+    transition:0.2s ease-in-out;
+}
+
+.bucketImg:hover{
+    transform: scale(1.2);
+}
+
+.moveImg:hover{
+    transform: scale(1.2);
+}
+
+.pickerImg:hover{
+    transform: scale(1.2);
+}
+
+.transformImg:hover{
+    transform: scale(1.2);
+}
+
+button:active{
+    background-color: white;
+    transition: 0.2s ease-in-out;
+}
+
+#adding{
+    height: 20px;
+    background-color: #ffb1b6;
+    display: block;
+    outline: 0 !important;
+    border: none;
+}
+
+canvas{
+    border: 1px solid black;
+    display: block;
+    margin: 2px;
+}
+
+button#add {
+    margin-left: 25%;
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+#player{
+    width:128px;
+    height: 128px;
+    border: 2px solid #4f86ff;
+    display: inline-block;
+    vertical-align: top;
+    outline: none;
+    margin: 20px;
+}

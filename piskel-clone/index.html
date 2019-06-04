@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Animation Player</title>
+</head>
+<body>
+<header>
+    <div class="header">CodeJam - Animation Player</div>
+</header>
+<div class="palette">
+    <button class="bucket" id="bucket">
+        <span class="bucketImg"></span>Paint bucket
+    </button>
+    <button class="picker" id="picker">
+        <span class="pickerImg"></span>Choose color
+    </button>
+    <button class="move" id="move">
+        <span class="moveImg"></span>Move
+    </button>
+    <button class="transform" id="transform">
+        <span class="transformImg"></span>Transform
+    </button>
+</div>
+
+<div class="container">
+    <div id="root"></div>
+    <button id="add" onclick="adding()">add frame</button>
+
+</div>
+<div id="player"></div>
+<button id="run" onclick="run()">Play</button>
+<button id="stop" onclick="run('stop')">Stop</button>
+<script src="index.js"></script>
+</body>
+</html>
