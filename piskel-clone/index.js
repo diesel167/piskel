@@ -79,6 +79,9 @@ function adding(old){
     temp.appendChild(buttonDelete);
     temp.appendChild(buttonClone);
     
+    
+    //отправить картинку ввместо temp а темп inner в editor
+    //и после каждого отпускания мыши создавать toDataURL("image/png") и отправлсять в document.getElementById('root').appendChild(КАРТИНКА)
     document.getElementById('root').appendChild(temp);
 }
 
