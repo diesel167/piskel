@@ -1,26 +1,37 @@
 let number = 0;  //ID of next canvas
+let CurrentFrameId='';
 adding();
 let tooltype = 'draw';
 
+
+//нужно добавить перемнную - текущий id активного слайда
 function adding(old){
     let canvas = document.createElement('canvas');
     canvas.setAttribute('width', '128');
     canvas.setAttribute('height', '128');
-    canvas.setAttribute('id', String('canvas' + number));
-    number++;
-    
+
     let ctx = canvas.getContext("2d");
     let paint=false;
     let last_mousex = 0;
     let last_mousey = 0;
     
-    
+    //if edit frame - draw at first old frame state
     if(old){
         //apply the old canvas to the new one
         ctx.drawImage(old, 0, 0);
+        CurrentFrameId=old.id.slice(6,);
+        console.log(old.id);
     }
-    
-    
+    //if new frame - create empty image to frame-list
+    if(!old){
+        CurrentFrameId=number;
+        let InitialImage=document.createElement('img');
+        InitialImage.src=canvas.toDataURL("image/png");
+        InitialImage.setAttribute('id', String('canvas' + CurrentFrameId));
+        number++;
+        document.getElementById('root').appendChild(InitialImage);
+    }
+
     canvas.onmousedown=function(e){
         paint=true;
     };
@@ -47,12 +58,27 @@ function adding(old){
         last_mousey = mousey;
     };
     
-    canvas.onmouseup=()=>{
+    canvas.onmouseup=function(){
         paint=false;
+        let image = new Image;
+        image.src=canvas.toDataURL("image/png");
+
+        image.setAttribute('id', String('canvas' + CurrentFrameId));
+
+
+        image.onclick=function(){
+            adding(this);
+        };
+        console.log(document.getElementById(String('canvas' + CurrentFrameId)));
+        document.getElementById(String('canvas' + CurrentFrameId)).parentNode.replaceChild(image,document.getElementById(String('canvas' + CurrentFrameId)));
+
+
     };
     
     canvas.onmouseleave=()=>{
         paint=false;
+        let image = new Image;
+        image.src=canvas.toDataURL("image/png");
     };
     
     
@@ -82,7 +108,8 @@ function adding(old){
     
     //отправить картинку ввместо temp а темп inner в editor
     //и после каждого отпускания мыши создавать toDataURL("image/png") и отправлсять в document.getElementById('root').appendChild(КАРТИНКА)
-    document.getElementById('root').appendChild(temp);
+    document.getElementById('editor').innerHTML='';
+    document.getElementById('editor').appendChild(canvas);
 }
 
 let player = document.getElementById('player');
@@ -98,15 +125,13 @@ function run(){
     stop();
     let arrayImg = [];
     document.getElementById('root').childNodes.forEach((item)=>{
-        
         let image = new Image;
-        
-        image.src=item.firstChild.toDataURL("image/png");
+        image.src=item.src;
         arrayImg.push(image);
     });
     
     console.log(arrayImg);
-    let fps = 8;
+    let fps = 2;
     let length = arrayImg.length;
     let i=0;
     
@@ -139,3 +164,27 @@ function use_tool (tool) {
 
 
 let editor=document.getElementById('editor');
+
+
+
+
+/*_________________________________________________*/
+
+//KEYBOARD
+document.addEventListener('keydown', function (event) {
+    let doEvent = new Event('click');
+    if (event.key === 's') {
+        document.getElementById('stop').dispatchEvent(doEvent);
+    }
+    if (event.key === 'p') {
+        document.getElementById('run').dispatchEvent(doEvent);
+    }
+    if (event.key === '+') {
+        document.getElementById('add').dispatchEvent(doEvent);
+    }
+    if (event.key === 'c') {
+        document.getElementById('clone').dispatchEvent(doEvent);
+    }
+});
+
+/*_________________________________________________*/
