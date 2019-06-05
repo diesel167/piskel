@@ -18,8 +18,6 @@ function adding(old){
     if(old){
         //apply the old canvas to the new one
         ctx.drawImage(old, 0, 0);
-        canvas.setAttribute('width', old.width);
-        canvas.setAttribute('height', old.height);
     }
     
     
@@ -85,7 +83,7 @@ function adding(old){
 }
 
 let player = document.getElementById('player');
-player.appendChild(document.createElement('div'));
+
 
 
 /*___________________________________________________________*/
@@ -111,8 +109,8 @@ function run(){
     
     
     timer = setInterval(function (){
-        player.children[0].innerHTML='';
-        player.children[0].appendChild(arrayImg[i%length]);
+        player.innerHTML='';
+        player.appendChild(arrayImg[i%length]);
         i++;
     },1000 / fps);
 
@@ -121,7 +119,7 @@ function run(){
 
 function stop(){
     clearInterval(timer);
-    player.children[0].innerHTML='';
+    player.innerHTML='';
 }
 /*___________________________________________________________*/
 
@@ -135,3 +133,6 @@ function use_tool (tool) {
     tooltype = tool; //update
 }
 /*___________________________________________________________*/
+
+
+let editor=document.getElementById('editor');

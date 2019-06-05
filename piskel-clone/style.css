@@ -135,3 +135,15 @@ button#add {
     outline: none;
     margin: 20px;
 }
+
+
+#editor{
+    width:128px;
+    height: 128px;
+    border: 2px solid #4f86ff;
+    display: inline-block;
+    vertical-align: top;
+    outline: none;
+    margin: 20px;
+    background-color:#ccc;
+}
