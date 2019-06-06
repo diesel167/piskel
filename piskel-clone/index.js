@@ -7,8 +7,8 @@ let tooltype = 'draw';
 //нужно добавить перемнную - текущий id активного слайда
 function adding(old){
     let canvas = document.createElement('canvas');
-    canvas.setAttribute('width', '128');
-    canvas.setAttribute('height', '128');
+    canvas.setAttribute('width', '256');
+    canvas.setAttribute('height', '256');
 
     let ctx = canvas.getContext("2d");
     let paint=false;
@@ -28,6 +28,7 @@ function adding(old){
         let InitialImage=document.createElement('img');
         InitialImage.src=canvas.toDataURL("image/png");
         InitialImage.setAttribute('id', String('canvas' + CurrentFrameId));
+        InitialImage.setAttribute("class", "canvas");
         number++;
         document.getElementById('root').appendChild(InitialImage);
     }
@@ -64,15 +65,14 @@ function adding(old){
         image.src=canvas.toDataURL("image/png");
 
         image.setAttribute('id', String('canvas' + CurrentFrameId));
-
+        image.setAttribute("class", "canvas");
 
         image.onclick=function(){
             adding(this);
         };
+        
         console.log(document.getElementById(String('canvas' + CurrentFrameId)));
         document.getElementById(String('canvas' + CurrentFrameId)).parentNode.replaceChild(image,document.getElementById(String('canvas' + CurrentFrameId)));
-
-
     };
     
     canvas.onmouseleave=()=>{
@@ -121,6 +121,12 @@ let player = document.getElementById('player');
 //RUN---STOP ANIMATION
 
 let timer;
+let fps = 5;
+sizeFps=()=>{
+    fps=document.getElementById("fps").value;
+    run();
+};
+
 function run(){
     stop();
     let arrayImg = [];
@@ -129,20 +135,21 @@ function run(){
         image.src=item.src;
         arrayImg.push(image);
     });
-    
-    console.log(arrayImg);
-    let fps = 2;
+
     let length = arrayImg.length;
     let i=0;
-    
-    
-    timer = setInterval(function (){
-        player.innerHTML='';
-        player.appendChild(arrayImg[i%length]);
-        i++;
-    },1000 / fps);
+    if(fps!=0){
+        console.log("не ноль")
+        timer = setInterval(function (){
+            player.innerHTML='';
+            player.appendChild(arrayImg[i%length]);
+            i++;
+        },1000 / fps);
+    }
+    else{
+        clearInterval(timer);
+    }
 
-    
 }
 
 function stop(){
