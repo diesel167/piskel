@@ -1,14 +1,19 @@
+
+
 let number = 0;  //ID of next canvas
 let CurrentFrameId='';
 adding();
 let tooltype = 'draw';
 
 
+
+
+
 //нужно добавить перемнную - текущий id активного слайда
 function adding(old){
     let canvas = document.createElement('canvas');
-    canvas.setAttribute('width', '256');
-    canvas.setAttribute('height', '256');
+    canvas.setAttribute('width', '512');
+    canvas.setAttribute('height', '512');
 
     let ctx = canvas.getContext("2d");
     let paint=false;
@@ -38,22 +43,23 @@ function adding(old){
     };
     
     canvas.onmousemove=function(e){
-        let mousex = parseInt(e.clientX-this.offsetLeft);
-        let mousey = parseInt(e.clientY-this.offsetTop);
+        let mousex = Math.ceil((parseInt(e.clientX-this.offsetLeft)-16)/16)*16;
+        let mousey = Math.ceil((parseInt(e.clientY-this.offsetTop)-16)/16)*16;
         if(paint) {
             ctx.beginPath();
             if(tooltype==='draw') {
                 ctx.globalCompositeOperation = 'source-over';
-                ctx.strokeStyle = 'black';
-                ctx.lineWidth = 5;
+                //ctx.strokeStyle = 'red';
+                //ctx.lineWidth = 16;
+                //ctx.lineTo(mousex,mousey);
             } else {
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.lineWidth = 10;
             }
-            ctx.moveTo(last_mousex,last_mousey);
-            ctx.lineTo(mousex,mousey);
-            ctx.lineJoin = ctx.lineCap = 'round';
-            ctx.stroke();
+            ctx.fillRect(mousex, mousey,16, 16);
+            //ctx.moveTo(last_mousex,last_mousey);
+            //ctx.lineJoin = ctx.lineCap = 'round';
+            //ctx.stroke();
         }
         last_mousex = mousex;
         last_mousey = mousey;
@@ -116,6 +122,36 @@ let player = document.getElementById('player');
 
 
 
+
+function line(x0, x1, y0, y1){
+    let deltax = Math.abs(x1 - x0);
+    let deltay = Math.abs(y1 - y0);
+    let error = 0;
+    let deltaerr = deltay;
+    let y = y0;
+    let diry = y1 - y0;
+    diry > 0?diry = 1:1;
+    diry < 0?diry = -1:1;
+    for (let x=x0; x<= x1;x++){
+        plot(x,y);
+        error = error + deltaerr;
+        if (2 * error >= deltax){
+            y = y + diry;
+            error = error - deltax;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 /*___________________________________________________________*/
 
 //RUN---STOP ANIMATION
@@ -133,13 +169,15 @@ function run(){
     document.getElementById('root').childNodes.forEach((item)=>{
         let image = new Image;
         image.src=item.src;
+        image.setAttribute('width', '128');
+        image.setAttribute('height', '128');
+        console.log(image);
         arrayImg.push(image);
     });
 
     let length = arrayImg.length;
     let i=0;
     if(fps!=0){
-        console.log("не ноль")
         timer = setInterval(function (){
             player.innerHTML='';
             player.appendChild(arrayImg[i%length]);
