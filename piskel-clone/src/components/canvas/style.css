@@ -51,11 +51,7 @@ body{
     box-shadow: 0 3px 6px -2px black;
 }
 
-.canvas{
-    grid-area: canvas;
-    z-index: 100;
-    padding: 10% 10% 5% 25%;
-}
+
 
 .palette button {
     display: block;
@@ -118,11 +114,24 @@ button:active{
 canvas{
     display: block;
 }
+.active{
+    border:2px solid red !important;
+}
 
 button#add {
-    margin-left: 25%;
-    border-radius: 10px;
     box-shadow: none;
+    height: 54px;
+    width: 90px;
+    border-radius: 7px;
+    border: 2px solid rgba(160, 160, 160, 0.57);
+    background-color: #2b2b2b;
+    color: rgba(160, 160, 160, 0.57);
+
+}
+button#add:hover{
+    border: 2px solid yellow;
+
+    transition: 0.2s ease-in-out;
 }
 
 #player{
@@ -156,17 +165,13 @@ button#add {
 }
 
 #root img:hover{
-    border: 2px solid yellow;
+    border: 2px solid rgba(160, 160, 160, 0.57);
+    transition: 0.2s ease-in-out;
 }
 
-#root img:active{
-    border: 2px solid yellow;
-}
 
 
 .canvas{
-    width:64px;
-    height:64px;
-
-
+    width:90px;
+    height:90px;
 }

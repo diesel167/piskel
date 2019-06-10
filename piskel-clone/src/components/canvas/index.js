@@ -1,44 +1,57 @@
-
-
 let number = 0;  //ID of next canvas
 let CurrentFrameId='';
-adding();
-let tooltype = 'draw';
+let tooltype = 'draw'; //default tool
+let lastActive='';
 
+adding(); //draw initial canvas
 
-
-
-
-//нужно добавить перемнную - текущий id активного слайда
 function adding(old){
     let canvas = document.createElement('canvas');
     canvas.setAttribute('width', '512');
     canvas.setAttribute('height', '512');
-
+    let image = new Image;
     let ctx = canvas.getContext("2d");
+    //ctx.scale(4,4);
     let paint=false;
-    let last_mousex = 0;
-    let last_mousey = 0;
     
     //if edit frame - draw at first old frame state
     if(old){
         //apply the old canvas to the new one
         ctx.drawImage(old, 0, 0);
         CurrentFrameId=old.id.slice(6,);
-        console.log(old.id);
+
     }
+    
     //if new frame - create empty image to frame-list
     if(!old){
         CurrentFrameId=number;
-        let InitialImage=document.createElement('img');
-        InitialImage.src=canvas.toDataURL("image/png");
-        InitialImage.setAttribute('id', String('canvas' + CurrentFrameId));
-        InitialImage.setAttribute("class", "canvas");
+        image.src=canvas.toDataURL("image/png");
+        image.setAttribute('id', String('canvas' + CurrentFrameId));
+        image.setAttribute("class", "canvas");
+
+        image.onclick=function(){
+            //delete active from previous
+            if(lastActive){
+                lastActive.classList.toggle('active');
+            }
+            image.classList.toggle('active');
+            lastActive=image;
+            //send it to editor
+            adding(this);
+        };
+        
+        if(lastActive){
+            lastActive.classList.toggle('active');
+        }
+        image.classList.toggle('active');
+        lastActive=image;
+
         number++;
-        document.getElementById('root').appendChild(InitialImage);
+        document.getElementById('root').appendChild(image);
     }
 
-    canvas.onmousedown=function(e){
+    //LISTENERS FOR CANVAS
+    canvas.onmousedown=function(){
         paint=true;
     };
     
@@ -49,17 +62,12 @@ function adding(old){
             ctx.beginPath();
             if(tooltype==='draw') {
                 ctx.globalCompositeOperation = 'source-over';
-                //ctx.strokeStyle = 'red';
-                //ctx.lineWidth = 16;
-                //ctx.lineTo(mousex,mousey);
             } else {
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.lineWidth = 10;
             }
-            ctx.fillRect(mousex, mousey,16, 16);
-            //ctx.moveTo(last_mousex,last_mousey);
-            //ctx.lineJoin = ctx.lineCap = 'round';
-            //ctx.stroke();
+            //draw
+            line(last_mousex,mousex,last_mousey, mousey, ctx);
         }
         last_mousex = mousex;
         last_mousey = mousey;
@@ -67,26 +75,31 @@ function adding(old){
     
     canvas.onmouseup=function(){
         paint=false;
-        let image = new Image;
+
         image.src=canvas.toDataURL("image/png");
 
         image.setAttribute('id', String('canvas' + CurrentFrameId));
         image.setAttribute("class", "canvas");
-
+        //image.classList.toggle('active');
+        
         image.onclick=function(){
+            //delete active from previous
+            if(lastActive){
+                lastActive.classList.toggle('active');
+            }
+            image.classList.toggle('active');
+            lastActive=image;
+            //send it to editor
             adding(this);
         };
-        
-        console.log(document.getElementById(String('canvas' + CurrentFrameId)));
+        lastActive=image;
+        image.classList.toggle('active');
         document.getElementById(String('canvas' + CurrentFrameId)).parentNode.replaceChild(image,document.getElementById(String('canvas' + CurrentFrameId)));
     };
-    
+                
     canvas.onmouseleave=()=>{
-        paint=false;
-        let image = new Image;
-        image.src=canvas.toDataURL("image/png");
-    };
-    
+                    paint=false;
+                };
     
     let buttonDelete = document.createElement('button');
     buttonDelete.setAttribute('width', '20');
@@ -96,7 +109,6 @@ function adding(old){
         this.parentNode.remove();
     };
     
-    
     let buttonClone = document.createElement('button');
     buttonClone.setAttribute('width', '20');
     buttonClone.setAttribute('height', '10');
@@ -105,50 +117,42 @@ function adding(old){
         adding(this.parentNode.children[0]);
     };
     
-    
     let temp = document.createElement('div');
     temp.appendChild(canvas);
     temp.appendChild(buttonDelete);
     temp.appendChild(buttonClone);
     
-    
-    //отправить картинку ввместо temp а темп inner в editor
-    //и после каждого отпускания мыши создавать toDataURL("image/png") и отправлсять в document.getElementById('root').appendChild(КАРТИНКА)
     document.getElementById('editor').innerHTML='';
     document.getElementById('editor').appendChild(canvas);
 }
 
 let player = document.getElementById('player');
 
-
-
-
-function line(x0, x1, y0, y1){
-    let deltax = Math.abs(x1 - x0);
-    let deltay = Math.abs(y1 - y0);
-    let error = 0;
-    let deltaerr = deltay;
-    let y = y0;
-    let diry = y1 - y0;
-    diry > 0?diry = 1:1;
-    diry < 0?diry = -1:1;
-    for (let x=x0; x<= x1;x++){
-        plot(x,y);
-        error = error + deltaerr;
-        if (2 * error >= deltax){
-            y = y + diry;
-            error = error - deltax;
+//алгоритм Брезенхема
+function line(x1, x2, y1, y2, ctx){
+    let deltaX = Math.abs(x2 - x1);
+    let deltaY = Math.abs(y2 - y1);
+    let signX=x1<x2?16:-16;
+    let signY=y1<y2?16:-16;
+    let error = deltaX-deltaY;
+    
+    ctx.fillRect(x2, y2,16, 16);
+    console.log('x1'+x1);
+    console.log('x2'+x2);
+    while(x1!==x2||y1!==y2){
+        ctx.fillRect(x1, y1,16, 16);
+        let error2=error*2;
+        if(error2>-deltaY){
+            error-=deltaY;
+            x1+=signX;
         }
+        if(error2<deltaX){
+            error+=deltaX;
+            y1+=signY;
+        }
+
     }
 }
-
-
-
-
-
-
-
-
 
 
 
