@@ -10,7 +10,7 @@
 <header>
     <div class="header">CodeJam - Animation Player</div>
 </header>
-<div class="palette">
+<!-- <div class="palette">
     <button class="bucket" id="bucket">
         <span class="bucketImg"></span>Paint bucket
     </button>
@@ -25,6 +25,20 @@
     </button>
 </div>
 
+<div class="colors">
+    <button id="currentColor">
+        <span id="currentColorImg" class="colorForPicker"></span>currentColor
+    </button>
+    <button id="prevColor">
+        <span id="prevColorImg" class="colorForPicker"></span>prevColor</button>
+    <button id="Blue">
+        <span class="colorForPicker"></span>Blue
+    </button>
+    <button id="Red">
+        <span class="colorForPicker"></span>Red
+    </button>
+</div>
+-->
 <div class="container">
     <div id="root"></div>
     <button id="add" onclick="adding()">Add new frame</button>
@@ -32,11 +46,12 @@
 <div id="editor"></div>
 <div id="player"></div>
 <input type="range" id="fps" oninput="sizeFps()" min="0" max="30" step="1" value="15">
-
+<p id="fpsAmount"></p>
 <button id="run" onclick="run()">Play</button>
 <button id="stop" onclick="stop()">Stop</button>
 <button id="draw" onclick="use_tool('draw')">draw</button>
 <button id="erase" onclick="use_tool('erase')">erase</button>
+<button id="line" onclick="use_tool('line')">line</button>
 <script src="index.js"></script>
 </body>
 </html>

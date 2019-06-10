@@ -2,10 +2,15 @@ let number = 0;  //ID of next canvas
 let CurrentFrameId='';
 let tooltype = 'draw'; //default tool
 let lastActive='';
+let ifRuns=false;
+
+//for drawing
+let startX;
+let startY;
 
 adding(); //draw initial canvas
 
-function adding(old){
+function adding(old,cloning){
     let canvas = document.createElement('canvas');
     canvas.setAttribute('width', '512');
     canvas.setAttribute('height', '512');
@@ -14,6 +19,9 @@ function adding(old){
     //ctx.scale(4,4);
     let paint=false;
     
+    
+    
+
     //if edit frame - draw at first old frame state
     if(old){
         //apply the old canvas to the new one
@@ -22,8 +30,8 @@ function adding(old){
 
     }
     
-    //if new frame - create empty image to frame-list
-    if(!old){
+    //if new frame - create empty image to frame-list or clonning frame
+    if(!old || cloning){
         CurrentFrameId=number;
         image.src=canvas.toDataURL("image/png");
         image.setAttribute('id', String('canvas' + CurrentFrameId));
@@ -45,14 +53,46 @@ function adding(old){
         }
         image.classList.toggle('active');
         lastActive=image;
-
         number++;
-        document.getElementById('root').appendChild(image);
+        
+        
+        let buttonDelete = document.createElement('button');
+        buttonDelete.setAttribute('width', '20');
+        buttonDelete.setAttribute('height', '10');
+        buttonDelete.setAttribute("class", "actFrame");
+        buttonDelete.innerText='delete';
+        buttonDelete.onclick=function(e){
+            if(this.parentNode.parentNode.childNodes.length>1){
+                document.getElementById('canvas0').click();
+                this.parentNode.remove();
+            }
+        };
+    
+        let buttonClone = document.createElement('button');
+        buttonClone.setAttribute('width', '20');
+        buttonClone.setAttribute('height', '10');
+        buttonClone.setAttribute("class", "actFrame");
+        buttonClone.innerText='clone';
+        buttonClone.onclick = function(){
+            adding(this.parentNode.childNodes[0],'cloning');
+            console.log(this.parentNode.childNodes[0]);
+        };
+        
+        let temp = document.createElement('div');
+        temp.appendChild(image);
+        temp.appendChild(buttonDelete);
+        temp.appendChild(buttonClone);
+        
+        document.getElementById('root').appendChild(temp);
     }
 
     //LISTENERS FOR CANVAS
-    canvas.onmousedown=function(){
+    canvas.onmousedown=function(e){
         paint=true;
+        if(tooltype==='line'){
+            startX = Math.ceil((parseInt(e.clientX-this.offsetLeft)-16)/16)*16;
+            startY = Math.ceil((parseInt(e.clientY-this.offsetTop)-16)/16)*16;
+        }
     };
     
     canvas.onmousemove=function(e){
@@ -62,12 +102,21 @@ function adding(old){
             ctx.beginPath();
             if(tooltype==='draw') {
                 ctx.globalCompositeOperation = 'source-over';
-            } else {
+                line(last_mousex,mousex,last_mousey, mousey, ctx);
+            }
+            
+            else if(tooltype==='erase') {
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.lineWidth = 10;
+                line(last_mousex,mousex,last_mousey, mousey, ctx);
             }
-            //draw
-            line(last_mousex,mousex,last_mousey, mousey, ctx);
+            /*
+            else if(tooltype==='line'){
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.moveTo(startX,startY);
+                ctx.lineTo(mousex, mousey);
+            }/*/
+            
         }
         last_mousex = mousex;
         last_mousey = mousey;
@@ -81,7 +130,6 @@ function adding(old){
         image.setAttribute('id', String('canvas' + CurrentFrameId));
         image.setAttribute("class", "canvas");
         //image.classList.toggle('active');
-        
         image.onclick=function(){
             //delete active from previous
             if(lastActive){
@@ -94,33 +142,16 @@ function adding(old){
         };
         lastActive=image;
         image.classList.toggle('active');
+        if(ifRuns){
+            run();
+        }
+        
         document.getElementById(String('canvas' + CurrentFrameId)).parentNode.replaceChild(image,document.getElementById(String('canvas' + CurrentFrameId)));
     };
                 
     canvas.onmouseleave=()=>{
                     paint=false;
                 };
-    
-    let buttonDelete = document.createElement('button');
-    buttonDelete.setAttribute('width', '20');
-    buttonDelete.setAttribute('height', '10');
-    buttonDelete.innerText='delete';
-    buttonDelete.onclick=function(){
-        this.parentNode.remove();
-    };
-    
-    let buttonClone = document.createElement('button');
-    buttonClone.setAttribute('width', '20');
-    buttonClone.setAttribute('height', '10');
-    buttonClone.innerText='clone';
-    buttonClone.onclick = function(){
-        adding(this.parentNode.children[0]);
-    };
-    
-    let temp = document.createElement('div');
-    temp.appendChild(canvas);
-    temp.appendChild(buttonDelete);
-    temp.appendChild(buttonClone);
     
     document.getElementById('editor').innerHTML='';
     document.getElementById('editor').appendChild(canvas);
@@ -137,8 +168,6 @@ function line(x1, x2, y1, y2, ctx){
     let error = deltaX-deltaY;
     
     ctx.fillRect(x2, y2,16, 16);
-    console.log('x1'+x1);
-    console.log('x2'+x2);
     while(x1!==x2||y1!==y2){
         ctx.fillRect(x1, y1,16, 16);
         let error2=error*2;
@@ -161,22 +190,25 @@ function line(x1, x2, y1, y2, ctx){
 //RUN---STOP ANIMATION
 
 let timer;
-let fps = 5;
+let fps = 15;
+document.getElementById('fpsAmount').innerHTML=fps;
 sizeFps=()=>{
     fps=document.getElementById("fps").value;
+    document.getElementById('fpsAmount').innerHTML=fps;
     run();
 };
 
 function run(){
     stop();
+    ifRuns=true;
     let arrayImg = [];
     document.getElementById('root').childNodes.forEach((item)=>{
-        let image = new Image;
-        image.src=item.src;
-        image.setAttribute('width', '128');
-        image.setAttribute('height', '128');
-        console.log(image);
-        arrayImg.push(image);
+            let image = new Image;
+            image.src=item.childNodes[0].src;
+            image.setAttribute('width', '128');
+            image.setAttribute('height', '128');
+            console.log(image);
+            arrayImg.push(image);
     });
 
     let length = arrayImg.length;
@@ -195,6 +227,7 @@ function run(){
 }
 
 function stop(){
+    ifRun=false;
     clearInterval(timer);
     player.innerHTML='';
 }
