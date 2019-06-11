@@ -183,9 +183,9 @@ button#add:hover{
     linear-gradient( 45deg, #4b4b4b 25%, transparent 25%, transparent 74%, #4b4b4b 75%, #4b4b4b);
     background-size:30px 30px;
     background-position: 0 0, 15px 15px;
-
-
 }
+
+
 
 #root img{
     position: relative;
@@ -196,7 +196,7 @@ button#add:hover{
     linear-gradient( 45deg, #4b4b4b 25%, transparent 25%, transparent 74%, #4b4b4b 75%, #4b4b4b);
     background-size:10px 10px;
     background-position: 0 0, 5px 5px;
-    opacity: .5;
+    opacity: .7;
 
 }
 
@@ -242,3 +242,22 @@ button#add:hover{
     color: white;
 }
 
+#red{
+    height:30px;
+    width:30px;
+    background-color:red;
+}
+#green{
+    height:30px;
+    width:30px;
+    background-color:green;
+}
+
+
+#helpCanvas{
+    width: 512px;
+    height: 512px;
+    position: absolute;
+    top: 41px;
+    z-index:100;
+}

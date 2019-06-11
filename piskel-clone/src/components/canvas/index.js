@@ -3,11 +3,23 @@ let CurrentFrameId='';
 let tooltype = 'draw'; //default tool
 let lastActive='';
 let ifRuns=false;
+let color='red';
+
+
+let helpCanvas = document.createElement('canvas'); // canvas for drawing
+let helpCtx = helpCanvas.getContext("2d");
+helpCanvas.setAttribute('width', '512');
+helpCanvas.setAttribute('height', '512');
+helpCanvas.setAttribute('id', 'helpCanvas');
+let helpImage = new Image;
+
+
+
 
 //for drawing
 let startX;
 let startY;
-
+let last_mousex, last_mousey;
 adding(); //draw initial canvas
 
 function adding(old,cloning){
@@ -65,6 +77,9 @@ function adding(old,cloning){
             if(this.parentNode.parentNode.childNodes.length>1){
                 document.getElementById('canvas0').click();
                 this.parentNode.remove();
+                if(ifRuns){
+                    run();
+                }
             }
         };
     
@@ -85,14 +100,67 @@ function adding(old,cloning){
         
         document.getElementById('root').appendChild(temp);
     }
-
+    /*helpCanvas.onmousedown=function(){paint=true;};
+    helpCanvas.onmousemove=function(e){
+        let mousex = Math.ceil((parseInt(e.clientX-this.offsetLeft)-16)/16)*16;
+        let mousey = Math.ceil((parseInt(e.clientY-this.offsetTop)-16)/16)*16;
+        helpCtx.beginPath();
+        if(tooltype==='line'){
+            helpCtx.clearRect(0, 0, 512, 512);
+            helpCtx.globalCompositeOperation = 'source-over';
+            line(startX,mousex,startY,mousey,helpCtx);
+        }
+        e.stopPropagation();
+    };
+    helpCanvas.onmouseup=function(e) {
+        console.log('hel');
+        paint=false;
+        if (tooltype === 'line') {
+            helpImage.src = helpCanvas.toDataURL("image/png");
+            ctx.drawImage(helpImage, 0, 0);
+        }
+        
+        if (ifRuns) {
+            run();
+        }
+        e.stopPropagation();
+        
+    };*/
     //LISTENERS FOR CANVAS
     canvas.onmousedown=function(e){
         paint=true;
         if(tooltype==='line'){
-            startX = Math.ceil((parseInt(e.clientX-this.offsetLeft)-16)/16)*16;
-            startY = Math.ceil((parseInt(e.clientY-this.offsetTop)-16)/16)*16;
+            startX=Math.ceil((parseInt(e.clientX-this.offsetLeft)-16)/16)*16;
+            startY=Math.ceil((parseInt(e.clientY-this.offsetTop)-16)/16)*16;
+            document.getElementById('editor').appendChild(helpCanvas);
         }
+        let mousex = Math.ceil((parseInt(e.clientX-this.offsetLeft)-16)/16)*16;
+        let mousey = Math.ceil((parseInt(e.clientY-this.offsetTop)-16)/16)*16;
+        if(paint) {
+            ctx.beginPath();
+            if(tooltype==='draw') {
+                ctx.globalCompositeOperation = 'source-over';
+                line(last_mousex,mousex,last_mousey, mousey, ctx);
+            }
+        
+            else if(tooltype==='erase') {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.lineWidth = 10;
+                line(last_mousex,mousex,last_mousey, mousey, ctx);
+            }
+        
+            else if(tooltype==='line'){
+                helpCtx.globalCompositeOperation = 'source-over';
+                //ctx.moveTo(startX,startY);
+                line(startX,mousex,startY,mousey,helpCtx);
+                
+
+            }
+        
+        }
+        last_mousex = mousex;
+        last_mousey = mousey;
+        e.stopPropagation();
     };
     
     canvas.onmousemove=function(e){
@@ -110,21 +178,25 @@ function adding(old,cloning){
                 ctx.lineWidth = 10;
                 line(last_mousex,mousex,last_mousey, mousey, ctx);
             }
-            /*
+            
             else if(tooltype==='line'){
-                ctx.globalCompositeOperation = 'source-over';
-                ctx.moveTo(startX,startY);
-                ctx.lineTo(mousex, mousey);
-            }/*/
+                //helpCtx.clearRect(0, 0, 512, 512);
+                helpCtx.beginPath();
+                //helpCtx.globalCompositeOperation = 'destination-out';
+               // line(startX,mousex,startY,mousey,helpCtx);
+                helpCtx.globalCompositeOperation = 'source-over';
+                line(startX,mousex,startY,mousey,helpCtx);
+                
+            }
             
         }
         last_mousex = mousex;
         last_mousey = mousey;
     };
     
-    canvas.onmouseup=function(){
+    canvas.onmouseup=function(e){
         paint=false;
-
+        console.log('can');
         image.src=canvas.toDataURL("image/png");
 
         image.setAttribute('id', String('canvas' + CurrentFrameId));
@@ -142,16 +214,23 @@ function adding(old,cloning){
         };
         lastActive=image;
         image.classList.toggle('active');
+        if(tooltype==='line'){
+            helpImage.src=helpCanvas.toDataURL("image/png");
+            ctx.drawImage(helpImage, 0, 0);
+        }
+        
+        
         if(ifRuns){
             run();
         }
-        
+        e.stopPropagation();
         document.getElementById(String('canvas' + CurrentFrameId)).parentNode.replaceChild(image,document.getElementById(String('canvas' + CurrentFrameId)));
     };
                 
     canvas.onmouseleave=()=>{
                     paint=false;
                 };
+    
     
     document.getElementById('editor').innerHTML='';
     document.getElementById('editor').appendChild(canvas);
@@ -161,14 +240,15 @@ let player = document.getElementById('player');
 
 //алгоритм Брезенхема
 function line(x1, x2, y1, y2, ctx){
+    ctx.fillStyle = color;
     let deltaX = Math.abs(x2 - x1);
     let deltaY = Math.abs(y2 - y1);
     let signX=x1<x2?16:-16;
     let signY=y1<y2?16:-16;
     let error = deltaX-deltaY;
-    
     ctx.fillRect(x2, y2,16, 16);
     while(x1!==x2||y1!==y2){
+        
         ctx.fillRect(x1, y1,16, 16);
         let error2=error*2;
         if(error2>-deltaY){
@@ -179,8 +259,8 @@ function line(x1, x2, y1, y2, ctx){
             error+=deltaX;
             y1+=signY;
         }
-
     }
+    
 }
 
 
@@ -241,6 +321,12 @@ function stop(){
 
 function use_tool (tool) {
     tooltype = tool; //update
+    if(tooltype==='line'){
+        document.getElementById('editor').appendChild(helpCanvas);
+    }
+}
+function choose_color (setColor) {
+    color = setColor; //update
 }
 /*___________________________________________________________*/
 
@@ -265,8 +351,17 @@ document.addEventListener('keydown', function (event) {
         document.getElementById('add').dispatchEvent(doEvent);
     }
     if (event.key === 'c') {
-        document.getElementById('clone').dispatchEvent(doEvent);
+        lastActive.parentNode.childNodes[2].dispatchEvent(doEvent);
+    }
+    if (event.key === 'd') {
+        lastActive.parentNode.childNodes[1].dispatchEvent(doEvent);
     }
 });
 
 /*_________________________________________________*/
+
+
+
+
+
+
