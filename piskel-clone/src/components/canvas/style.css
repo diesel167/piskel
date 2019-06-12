@@ -12,19 +12,14 @@ body{
     color: #2b2b2b;
 }
 
-.header{
-
-}
-
-.header:before{
-
-}
 
 .container{
-    width: 150px;
-    padding: 1%;
-    text-align: center;
-    display: inline-block;
+    display: grid;
+    padding: 20px;
+    width: 100%;
+    grid-template-rows: 100%;
+    grid-template-columns: 100px 20% 1fr 20%;
+    grid-gap: 2vw;
 }
 
 .palette{
@@ -35,14 +30,10 @@ body{
     background-color: red;
     box-shadow: 0 3px 6px -2px black;
 }
-
 .colors{
     margin: 20px;
     box-shadow: 0 3px 6px -2px black;
 }
-
-
-
 .palette button {
     display: block;
     outline: 0 !important;
@@ -53,8 +44,6 @@ body{
     line-height: 30px;
     text-align: left;
 }
-
-
 .colors button {
     display: block;
     outline: 0 !important;
@@ -65,28 +54,22 @@ body{
     line-height: 30px;
     text-align: left;
 }
-
 button:hover{
     cursor:pointer;
     transition:0.2s ease-in-out;
 }
-
 .bucketImg:hover{
     transform: scale(1.2);
 }
-
 .moveImg:hover{
     transform: scale(1.2);
 }
-
 .pickerImg:hover{
     transform: scale(1.2);
 }
-
 .transformImg:hover{
     transform: scale(1.2);
 }
-
 #currentColorImg{
     width: 20px;
     height: 20px;
@@ -94,7 +77,6 @@ button:hover{
     display: inline-block;
     margin-right: 20px;
 }
-
 #prevColorImg{
     width: 20px;
     height: 20px;
@@ -102,7 +84,6 @@ button:hover{
     display: inline-block;
     margin-right: 20px;
 }
-
 #Blue>.colorForPicker{
     width: 20px;
     height: 20px;
@@ -111,7 +92,6 @@ button:hover{
     margin-right: 20px;
     background-color: rgb(64, 65, 195);
 }
-
 #Red>.colorForPicker{
     width: 20px;
     height: 20px;
@@ -122,20 +102,24 @@ button:hover{
 }
 
 
-#adding{
-    height: 20px;
-    background-color: #ffb1b6;
-    display: block;
-    outline: 0 !important;
-    border: none;
+
+.active{
+    border:2px solid #fff201 !important;
 }
 
-canvas{
-    display: block;
+.tools{
+    display: grid;
+    grid-template-columns: 50px 50px;
+    grid-template-rows: 50px 50px 50px 50px 50px;
 }
-.active{
-    border:2px solid red !important;
+
+.tools button{
+    display:block;
+    width: 50px;
+    height:50px;
 }
+
+
 
 button#add {
     box-shadow: none;
@@ -147,27 +131,27 @@ button#add {
     color: rgba(160, 160, 160, 0.57);
 
 }
-
 button#add:hover{
     border: 2px solid yellow;
     transition: 0.2s ease-in-out;
 }
 
+
+
+
 #player{
-    width:128px;
-    height: 128px;
+    width:256px;
+    height: 256px;
     border: 2px solid #4f86ff;
     display: inline-block;
     vertical-align: top;
     outline: none;
-    margin: 20px;
     background-color: rgba(181, 181, 181, 0.51);
     background-image: linear-gradient( 45deg, #828282 25%, transparent 25%, transparent 74%, #828282 75%, #828282),
     linear-gradient( 45deg, #828282 25%, transparent 25%, transparent 74%, #828282 75%, #828282);
     background-size:10px 10px;
     background-position: 0 0, 5px 5px;
 }
-
 
 #editor{
     width:512px;
@@ -177,7 +161,6 @@ button#add:hover{
     display: inline-block;
     vertical-align: top;
     outline: none;
-    margin: 20px;
     background-color: rgba(128, 128, 128, 0.51);
     background-image: linear-gradient( 45deg, #4b4b4b 25%, transparent 25%, transparent 74%, #4b4b4b 75%, #4b4b4b),
     linear-gradient( 45deg, #4b4b4b 25%, transparent 25%, transparent 74%, #4b4b4b 75%, #4b4b4b);
@@ -185,10 +168,13 @@ button#add:hover{
     background-position: 0 0, 15px 15px;
 }
 
-
+#editorWithHelpCanvas{
+    position: relative;
+}
 
 #root img{
     position: relative;
+    display: block;
     border: 2px solid rgba(87, 87, 57, 0.81);
     padding: 0;
     background-color: rgba(183, 183, 183, 0.51);
@@ -200,14 +186,10 @@ button#add:hover{
 
 }
 
-
-
 #root img:hover{
     border: 2px solid rgba(160, 160, 160, 0.57);
     transition: 0.2s ease-in-out;
 }
-
-
 
 .actFrame{
     position: relative;
@@ -221,15 +203,16 @@ button#add:hover{
     background-color: #2b2b2b;
     color: rgba(160, 160, 160, 0.57);
     z-index: 50;
-
 }
+.actFrame:nth-child(3){
+    display: inline-block;
+}
+
 
 .actFrame:hover{
     border: 2px solid yellow;
     transition: 0.2s ease-in-out;
 }
-
-
 
 .canvas{
     width:90px;
@@ -243,21 +226,24 @@ button#add:hover{
 }
 
 #red{
-    height:30px;
-    width:30px;
+    height:50px;
+    width:50px;
     background-color:red;
 }
+
 #green{
-    height:30px;
-    width:30px;
+    height:50px;
+    width:50px;
     background-color:green;
 }
-
 
 #helpCanvas{
     width: 512px;
     height: 512px;
+    box-sizing: content-box;
+    border: 2px solid #4f86ff;
     position: absolute;
-    top: 41px;
+    top: 0;
+    left: 0;
     z-index:100;
 }

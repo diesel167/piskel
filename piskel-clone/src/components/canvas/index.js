@@ -69,8 +69,6 @@ function adding(old,cloning){
         
         
         let buttonDelete = document.createElement('button');
-        buttonDelete.setAttribute('width', '20');
-        buttonDelete.setAttribute('height', '10');
         buttonDelete.setAttribute("class", "actFrame");
         buttonDelete.innerText='delete';
         buttonDelete.onclick=function(e){
@@ -84,8 +82,6 @@ function adding(old,cloning){
         };
     
         let buttonClone = document.createElement('button');
-        buttonClone.setAttribute('width', '20');
-        buttonClone.setAttribute('height', '10');
         buttonClone.setAttribute("class", "actFrame");
         buttonClone.innerText='clone';
         buttonClone.onclick = function(){
@@ -104,14 +100,14 @@ function adding(old,cloning){
     //LISTENERS FOR TEMPORARY CANVAS FOR OTHER TOOLS
     helpCanvas.onmousedown=function(e){
         paint=true;
-        startX=Math.ceil((parseInt(e.clientX-this.offsetLeft)-16)/16)*16;
-        startY=Math.ceil((parseInt(e.clientY-this.offsetTop)-16)/16)*16;
+        startX=Math.ceil((parseInt(e.clientX-this.getBoundingClientRect().left)-16)/16)*16;
+        startY=Math.ceil((parseInt(e.clientY-this.getBoundingClientRect().top)-16)/16)*16;
     };
     helpCanvas.onmousemove=function(e){
         if(paint){
             console.log('hel');
-            let mousex = Math.ceil((parseInt(e.clientX-this.offsetLeft)-16)/16)*16;
-            let mousey = Math.ceil((parseInt(e.clientY-this.offsetTop)-16)/16)*16;
+            let mousex = Math.ceil((parseInt(e.clientX-this.getBoundingClientRect().left)-16)/16)*16;
+            let mousey = Math.ceil((parseInt(e.clientY-this.getBoundingClientRect().top)-16)/16)*16;
             if(tooltype==='line'){
                 helpCtx.clearRect(0, 0, 512, 512);
                 helpCtx.beginPath();
@@ -136,46 +132,36 @@ function adding(old,cloning){
         if (ifRuns) {
             run();
         }
-        this.remove();
+    
     };
     //LISTENERS FOR CANVAS
     canvas.onmousedown=function(e){
         paint=true;
-        if(tooltype==='line'){
-            startX=Math.ceil((parseInt(e.clientX-this.offsetLeft)-16)/16)*16;
-            startY=Math.ceil((parseInt(e.clientY-this.offsetTop)-16)/16)*16;
-            document.getElementById('editor').appendChild(helpCanvas);
-        }
-        let mousex = Math.ceil((parseInt(e.clientX-this.offsetLeft)-16)/16)*16;
-        let mousey = Math.ceil((parseInt(e.clientY-this.offsetTop)-16)/16)*16;
+        
+        let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16)/16)*16;
+        let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16)/16)*16;
+        
         if(paint) {
             ctx.beginPath();
             if(tooltype==='draw') {
                 ctx.globalCompositeOperation = 'source-over';
-                line(last_mousex,mousex,last_mousey, mousey, ctx);
+                ctx.fillRect(mousex, mousey,16, 16);
             }
         
             else if(tooltype==='erase') {
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.lineWidth = 10;
-                line(last_mousex,mousex,last_mousey, mousey, ctx);
+                ctx.fillRect(mousex, mousey,16, 16);
             }
-        
-            else if(tooltype==='line'){
-                helpCtx.globalCompositeOperation = 'source-over';
-                //ctx.moveTo(startX,startY);
-                line(startX,mousex,startY,mousey,helpCtx);
-            }
-        
-        }
         last_mousex = mousex;
         last_mousey = mousey;
-        e.stopPropagation();
+        }
     };
     
     canvas.onmousemove=function(e){
-        let mousex = Math.ceil((parseInt(e.clientX-this.offsetLeft)-16)/16)*16;
-        let mousey = Math.ceil((parseInt(e.clientY-this.offsetTop)-16)/16)*16;
+        let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16)/16)*16;
+        let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16)/16)*16;
+        console.log(mousex, mousey);
         if(paint) {
             ctx.beginPath();
             if(tooltype==='draw') {
@@ -187,17 +173,6 @@ function adding(old,cloning){
                 ctx.lineWidth = 10;
                 line(last_mousex,mousex,last_mousey, mousey, ctx);
             }
-            
-            /*else if(tooltype==='line'){
-                //helpCtx.clearRect(0, 0, 512, 512);
-                helpCtx.beginPath();
-                //helpCtx.globalCompositeOperation = 'destination-out';
-               // line(startX,mousex,startY,mousey,helpCtx);
-                helpCtx.globalCompositeOperation = 'source-over';
-                line(startX,mousex,startY,mousey,helpCtx);
-                
-            }*/
-            
         }
         last_mousex = mousex;
         last_mousey = mousey;
@@ -205,7 +180,6 @@ function adding(old,cloning){
     
     canvas.onmouseup=function(e){
         paint=false;
-        console.log('can');
         image.src=canvas.toDataURL("image/png");
 
         image.setAttribute('id', String('canvas' + CurrentFrameId));
@@ -293,8 +267,8 @@ function run(){
     document.getElementById('root').childNodes.forEach((item)=>{
             let image = new Image;
             image.src=item.childNodes[0].src;
-            image.setAttribute('width', '128');
-            image.setAttribute('height', '128');
+            image.setAttribute('width', '256');
+            image.setAttribute('height', '256');
             console.log(image);
             arrayImg.push(image);
     });
@@ -328,9 +302,13 @@ function stop(){
 //CHOOSE TOOL
 
 function use_tool (tool) {
+    if(tooltype==='line'){
+        helpCanvas.remove();
+    }
+    
     tooltype = tool; //update
     if(tooltype==='line'){
-        document.getElementById('editor').appendChild(helpCanvas);
+        document.getElementById('editorWithHelpCanvas').appendChild(helpCanvas);
     }
 }
 function choose_color (setColor) {

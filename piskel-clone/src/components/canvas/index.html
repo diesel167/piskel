@@ -40,20 +40,43 @@
 </div>
 -->
 <div class="container">
-    <div id="root"></div>
-    <button id="add" onclick="adding()">Add new frame</button>
+    <div class="tools">
+        <button id="draw" onclick="use_tool('draw')">draw</button>
+        <button id="erase" onclick="use_tool('erase')">erase</button>
+        <button id="line" onclick="use_tool('line')">line</button>
+        <button id="run" onclick="run()">Play</button>
+        <button id="stop" onclick="stop()">Stop</button>
+        <button id="red" onclick="choose_color('red')"/>
+        <button id="green" onclick="choose_color('green')"/>
+    </div>
+    <div class="frames">
+        <div id="root"></div>
+        <button id="add" onclick="adding()">Add new frame</button>
+    </div>
+
+    <div id="editorWithHelpCanvas">
+        <div id="editor">
+
+
+        </div>
+    </div>
+
+    <div class="animation">
+        <div id="player"></div>
+        <input type="range" id="fps" oninput="sizeFps()" min="0" max="30" step="1" value="15">
+        <p id="fpsAmount"/>
+
+    </div>
+
+
+
+
 </div>
-<div id="editor"></div>
-<div id="player"></div>
-<input type="range" id="fps" oninput="sizeFps()" min="0" max="30" step="1" value="15">
-<p id="fpsAmount"></p>
-<button id="run" onclick="run()">Play</button>
-<button id="stop" onclick="stop()">Stop</button>
-<button id="draw" onclick="use_tool('draw')">draw</button>
-<button id="erase" onclick="use_tool('erase')">erase</button>
-<button id="line" onclick="use_tool('line')">line</button>
-<button id="red" onclick="choose_color('red')"></button>
-<button id="green" onclick="choose_color('green')"></button>
+
+
+
+
+
 <script src="index.js"></script>
 </body>
 </html>
