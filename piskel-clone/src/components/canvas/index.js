@@ -105,7 +105,6 @@ function adding(old,cloning){
     };
     helpCanvas.onmousemove=function(e){
         if(paint){
-            console.log('hel');
             let mousex = Math.ceil((parseInt(e.clientX-this.getBoundingClientRect().left)-16)/16)*16;
             let mousey = Math.ceil((parseInt(e.clientY-this.getBoundingClientRect().top)-16)/16)*16;
             if(tooltype==='line'){
@@ -121,18 +120,19 @@ function adding(old,cloning){
         if (tooltype === 'line') {
             
             helpImage.src = helpCanvas.toDataURL("image/png");
-            let d = function(){
+            
+            let forOnLoad = function(){
                 ctx.drawImage(helpImage, 0, 0);
+                image.src=canvas.toDataURL("image/png");
             };
             
-            helpImage.onload=d;
-            
+            helpImage.onload=forOnLoad;
  
         }
         if (ifRuns) {
             run();
         }
-    
+        helpCtx.clearRect(0, 0, 512, 512);;
     };
     //LISTENERS FOR CANVAS
     canvas.onmousedown=function(e){
@@ -161,7 +161,6 @@ function adding(old,cloning){
     canvas.onmousemove=function(e){
         let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16)/16)*16;
         let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16)/16)*16;
-        console.log(mousex, mousey);
         if(paint) {
             ctx.beginPath();
             if(tooltype==='draw') {
@@ -181,7 +180,6 @@ function adding(old,cloning){
     canvas.onmouseup=function(e){
         paint=false;
         image.src=canvas.toDataURL("image/png");
-
         image.setAttribute('id', String('canvas' + CurrentFrameId));
         image.setAttribute("class", "canvas");
         //image.classList.toggle('active');
@@ -197,11 +195,11 @@ function adding(old,cloning){
         };
         lastActive=image;
         image.classList.toggle('active');
+        
         if(tooltype==='line'){
             helpImage.src=helpCanvas.toDataURL("image/png");
             ctx.drawImage(helpImage, 0, 0);
         }
-        
         
         if(ifRuns){
             run();
