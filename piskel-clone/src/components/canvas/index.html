@@ -41,13 +41,14 @@
 -->
 <div class="container">
     <div class="tools">
-        <button id="draw" onclick="use_tool('draw')">draw</button>
-        <button id="erase" onclick="use_tool('erase')">erase</button>
-        <button id="line" onclick="use_tool('line')">line</button>
-        <button id="run" onclick="run()">Play</button>
-        <button id="stop" onclick="stop()">Stop</button>
+        <button id="draw" onclick="use_tool('draw',this)">draw</button>
+        <button id="erase" onclick="use_tool('erase',this)">erase</button>
+        <button id="line" onclick="use_tool('line',this)">line</button>
+
         <button id="red" onclick="choose_color('red')"/>
         <button id="green" onclick="choose_color('green')"/>
+        <button id="run" onclick="run()">Play</button>
+        <button id="stop" onclick="stop()">Stop</button>
     </div>
     <div class="frames">
         <div id="root"></div>
@@ -56,9 +57,8 @@
 
     <div id="editorWithHelpCanvas">
         <div id="editor">
-
-
         </div>
+        <p id="coordinates"/>
     </div>
 
     <div class="animation">
@@ -68,12 +68,7 @@
 
     </div>
 
-
-
-
 </div>
-
-
 
 
 

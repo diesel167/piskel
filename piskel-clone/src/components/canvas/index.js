@@ -1,7 +1,8 @@
 let number = 0;  //ID of next canvas
 let CurrentFrameId='';
 let tooltype = 'draw'; //default tool
-let lastActive='';
+let toolButtonPushed='';
+let lastActiveFrame='';
 let ifRuns=false;
 let color='red';
 
@@ -12,7 +13,6 @@ helpCanvas.setAttribute('width', '512');
 helpCanvas.setAttribute('height', '512');
 helpCanvas.setAttribute('id', 'helpCanvas');
 let helpImage = new Image;
-
 
 
 
@@ -51,20 +51,24 @@ function adding(old,cloning){
 
         image.onclick=function(){
             //delete active from previous
-            if(lastActive){
-                lastActive.classList.toggle('active');
+            if(lastActiveFrame){
+                console.log(lastActiveFrame);
+                lastActiveFrame.classList.toggle('active');
             }
             image.classList.toggle('active');
-            lastActive=image;
+            lastActiveFrame=image;
             //send it to editor
             adding(this);
+            if(tooltype==='line'){
+                use_tool('line');
+            }
         };
         
-        if(lastActive){
-            lastActive.classList.toggle('active');
+        if(lastActiveFrame){
+            lastActiveFrame.classList.toggle('active');
         }
         image.classList.toggle('active');
-        lastActive=image;
+        lastActiveFrame=image;
         number++;
         
         
@@ -100,6 +104,8 @@ function adding(old,cloning){
     //LISTENERS FOR TEMPORARY CANVAS FOR OTHER TOOLS
     helpCanvas.onmousedown=function(e){
         paint=true;
+        //set draw (if eraser was last)
+        ctx.globalCompositeOperation = 'source-over';
         startX=Math.ceil((parseInt(e.clientX-this.getBoundingClientRect().left)-16)/16)*16;
         startY=Math.ceil((parseInt(e.clientY-this.getBoundingClientRect().top)-16)/16)*16;
     };
@@ -118,22 +124,33 @@ function adding(old,cloning){
     helpCanvas.onmouseup=function(e) {
         paint=false;
         if (tooltype === 'line') {
-            
             helpImage.src = helpCanvas.toDataURL("image/png");
-            
-            let forOnLoad = function(){
+            helpImage.onload=function(){
                 ctx.drawImage(helpImage, 0, 0);
                 image.src=canvas.toDataURL("image/png");
+                image.setAttribute('id', String('canvas' + CurrentFrameId));
+                image.setAttribute("class", "canvas");
+                //image.classList.toggle('active');
+                image.onclick=function(){
+                    //delete active from previous
+                    if(lastActive){
+                        lastActive.classList.toggle('active');
+                    }
+                    image.classList.toggle('active');
+                    lastActive=image;
+                    //send it to editor
+                    adding(this);
+                };
+                lastActive=image;
+                image.classList.toggle('active');
             };
-            
-            helpImage.onload=forOnLoad;
- 
         }
         if (ifRuns) {
             run();
         }
         helpCtx.clearRect(0, 0, 512, 512);;
     };
+    
     //LISTENERS FOR CANVAS
     canvas.onmousedown=function(e){
         paint=true;
@@ -161,6 +178,10 @@ function adding(old,cloning){
     canvas.onmousemove=function(e){
         let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16)/16)*16;
         let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16)/16)*16;
+        mousex<0?mousex=0:1;
+        mousey<0?mousey=0:1;
+        
+        document.getElementById('coordinates').innerHTML=`[${mousex/16};${mousey/16}]`;
         if(paint) {
             ctx.beginPath();
             if(tooltype==='draw') {
@@ -208,8 +229,10 @@ function adding(old,cloning){
     };
                 
     canvas.onmouseleave=()=>{
-                    paint=false;
-                };
+        paint=false;
+        document.getElementById('coordinates').innerHTML='';
+        
+   };
     
     
     document.getElementById('editor').innerHTML='';
@@ -242,6 +265,10 @@ function line(x1, x2, y1, y2, ctx){
     }
     
 }
+
+
+
+
 
 
 
@@ -291,17 +318,21 @@ function stop(){
     clearInterval(timer);
     player.innerHTML='';
 }
-/*___________________________________________________________*/
 
-
-
-
-/*___________________________________________________________*/
 //CHOOSE TOOL
 
-function use_tool (tool) {
+function use_tool (tool,element) {
+    
+    if(toolButtonPushed){
+        toolButtonPushed.classList.toggle('active');
+    }
+
+    element.classList.toggle('active');
+    toolButtonPushed=element;
+    
+    
     if(tooltype==='line'){
-        helpCanvas.remove();
+        document.getElementById('editorWithHelpCanvas').lastChild.remove();
     }
     
     tooltype = tool; //update
@@ -317,10 +348,6 @@ function choose_color (setColor) {
 
 let editor=document.getElementById('editor');
 
-
-
-
-/*_________________________________________________*/
 
 //KEYBOARD
 document.addEventListener('keydown', function (event) {
@@ -343,6 +370,7 @@ document.addEventListener('keydown', function (event) {
 });
 
 /*_________________________________________________*/
+
 
 
 
