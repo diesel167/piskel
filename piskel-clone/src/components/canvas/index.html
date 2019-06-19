@@ -41,7 +41,12 @@
 -->
 <div class="container">
     <div class="tools">
-        <button id="draw" onclick="use_tool('draw',this)">draw</button>
+        <div class="penSize">
+            <button id="size1" onclick="change_size(1)"/>
+            <button id="size2" onclick="change_size(2)"/>
+            <button id="size3" onclick="change_size(3)"/>
+        </div>
+        <button id="draw" onclick="use_tool('draw',this)">pen</button>
         <button id="erase" onclick="use_tool('erase',this)">erase</button>
         <button id="line" onclick="use_tool('line',this)">line</button>
 
@@ -60,9 +65,9 @@
         </div>
         <span id="coordinates"></span>
         <span id="size"></span>
-        <button id="size64" onclick="change_size(16)">size64</button>
-        <button id="size128" onclick="change_size(8)">size128</button>
-
+        <button  onclick="change_sizeCanvas(32)">canvas32</button>
+        <button  onclick="change_sizeCanvas(64)">canvas64</button>
+        <button  onclick="change_sizeCanvas(128)">canvas128</button>
     </div>
 
     <div class="animation">

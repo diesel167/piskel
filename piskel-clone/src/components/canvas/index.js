@@ -2,14 +2,17 @@ let number = 0;  //ID of next canvas
 let CurrentFrameId='';
 let tooltype = 'draw'; //default tool
 let toolButtonPushed='';
+use_tool('draw',document.getElementById('draw'));
 let lastActiveFrame='';
 let ifRuns=false;
 let color='red';
-let size = 32;
-
+let size = 1; //for tool size
+let sizeCanvas = 32; //default
+let currentCtx;
+let currentCanvas;
 
 //show size
-document.getElementById('size').innerHTML=`[${32*32/size}x${32*32/size}]`;
+document.getElementById('size').innerHTML=`[${sizeCanvas}x${sizeCanvas}]`;
 
 let helpCanvas = document.createElement('canvas'); // canvas for drawing
 let helpCtx = helpCanvas.getContext("2d");
@@ -32,6 +35,8 @@ function adding(old,cloning){
     canvas.setAttribute('height', '512');
     let image = new Image;
     let ctx = canvas.getContext("2d");
+    currentCtx=ctx;
+    currentCanvas=canvas;
     //ctx.scale(4,4);
     let paint=false;
     
@@ -158,33 +163,31 @@ function adding(old,cloning){
     //LISTENERS FOR CANVAS
     canvas.onmousedown=function(e){
         paint=true;
-        console.log(size);
-        let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16*size/32)/(16*size/32))*16*size/32;
-        let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16*size/32)/(16*size/32))*16*size/32;
+        let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16*size/(sizeCanvas/32))/(16*size/(sizeCanvas/32)))*16*size/(sizeCanvas/32);
+        let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16*size/(sizeCanvas/32))/(16*size/(sizeCanvas/32)))*16*size/(sizeCanvas/32);
         
         if(paint) {
             ctx.beginPath();
             if(tooltype==='draw') {
                 ctx.globalCompositeOperation = 'source-over';
-                ctx.fillRect(mousex, mousey,16*size/32, 16*size/32);
+                ctx.fillRect(mousex, mousey,16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
             }
         
             else if(tooltype==='erase') {
                 ctx.globalCompositeOperation = 'destination-out';
-                ctx.fillRect(mousex, mousey,16*size/32, 16*size/32);
+                ctx.fillRect(mousex, mousey,16/(sizeCanvas/32), 16/(sizeCanvas/32));
             }
         last_mousex = mousex;
         last_mousey = mousey;
         }
     };
-    
     canvas.onmousemove=function(e){
-        let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16*size/32)/(16*size/32))*16*size/32;
-        let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16*size/32)/(16*size/32))*16*size/32;
+        let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16/(sizeCanvas/32))/(16/(sizeCanvas/32)))*16/(sizeCanvas/32);
+        let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16/(sizeCanvas/32))/(16/(sizeCanvas/32)))*16/(sizeCanvas/32);
         mousex<0?mousex=0:1;
         mousey<0?mousey=0:1;
         
-        document.getElementById('coordinates').innerHTML=`[${mousex/16};${mousey/16}]`;
+        document.getElementById('coordinates').innerHTML=`[${mousex*32/(16*size)};${mousey*32/(16*size)}]`;
         
         if(paint) {
             ctx.beginPath();
@@ -200,7 +203,6 @@ function adding(old,cloning){
         last_mousex = mousex;
         last_mousey = mousey;
     };
-    
     canvas.onmouseup=function(e){
         paint=false;
         image.src=canvas.toDataURL("image/png");
@@ -230,7 +232,6 @@ function adding(old,cloning){
         }
         document.getElementById(String('canvas' + CurrentFrameId)).parentNode.replaceChild(image,document.getElementById(String('canvas' + CurrentFrameId)));
     };
-                
     canvas.onmouseleave=()=>{
         paint=false;
         document.getElementById('coordinates').innerHTML='';
@@ -240,6 +241,9 @@ function adding(old,cloning){
     
     document.getElementById('editor').innerHTML='';
     document.getElementById('editor').appendChild(canvas);
+    
+    
+    
 }
 
 let player = document.getElementById('player');
@@ -249,12 +253,12 @@ function line(x1, x2, y1, y2, ctx){
     ctx.fillStyle = color;
     let deltaX = Math.abs(x2 - x1);
     let deltaY = Math.abs(y2 - y1);
-    let signX=x1<x2?(16*size/32):-(16*size/32);
-    let signY=y1<y2?(16*size/32):-(16*size/32);
+    let signX=x1<x2?(16/(sizeCanvas/32)):-(16/(sizeCanvas/32));
+    let signY=y1<y2?(16/(sizeCanvas/32)):-(16/(sizeCanvas/32));
     let error = deltaX-deltaY;
-    ctx.fillRect(x2, y2,16*size/32, 16*size/32);
+    ctx.fillRect(x2, y2,16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
     while(x1!==x2||y1!==y2){
-        ctx.fillRect(x1, y1,16*size/32, 16*size/32);
+        ctx.fillRect(x1, y1,16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
         let error2=error*2;
         if(error2>-deltaY){
             error-=deltaY;
@@ -267,13 +271,6 @@ function line(x1, x2, y1, y2, ctx){
     }
     
 }
-
-
-
-
-
-
-
 /*___________________________________________________________*/
 
 //RUN---STOP ANIMATION
@@ -331,7 +328,7 @@ function use_tool (tool,element) {
 
     element.classList.toggle('active');
     toolButtonPushed=element;
-    
+    console.log('element');
     
     if(tooltype==='line'){
         document.getElementById('editorWithHelpCanvas').lastChild.remove();
@@ -347,7 +344,27 @@ function choose_color (setColor) {
 }
 function change_size (setSize) {
     size = setSize; //update
-    document.getElementById('size').innerHTML=`[${32*32/size}x${32*32/size}]`;
+    
+}
+function change_sizeCanvas (setSize) {
+    let tempImage = new Image();
+    tempImage.src=currentCanvas.toDataURL("image/png");
+    tempImage.onload=function(){
+        currentCtx.clearRect(0, 0, 512, 512);
+        currentCtx.imageSmoothingEnabled = false;
+        currentCtx.drawImage(tempImage, 0, 0, 512/(setSize/sizeCanvas), 512/(setSize/sizeCanvas));
+        sizeCanvas = setSize; //update
+        
+        //update frame preview
+        let frameForUpdate = document.getElementById(String('canvas' + CurrentFrameId));
+        frameForUpdate.src=currentCanvas.toDataURL("image/png");
+        if(ifRuns){
+            run();
+        }
+        document.getElementById('size').innerHTML=`[${sizeCanvas}x${sizeCanvas}]`;
+}
+   
+
 }
 /*___________________________________________________________*/
 

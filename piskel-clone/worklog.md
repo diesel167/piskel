@@ -7,3 +7,4 @@
 | Jun 8        | Jun 10   | 10h        | toggle between   frames, add Brezenhem algorithm for drawing, clone debugging                 |
 | Jun 11       | Jun 12   | 10h        | line   tool, colors insertion, css grid insert                                                |
 | Jun 16       | Jun 17   | 6h         | debug frame   management, add selection of tools, add coordinates                             |
+| Jun 18       | Jun 19   | 5h         | resizing feature   (pen and canvas sizes)                                                     |
