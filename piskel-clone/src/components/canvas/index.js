@@ -5,7 +5,11 @@ let toolButtonPushed='';
 let lastActiveFrame='';
 let ifRuns=false;
 let color='red';
+let size = 32;
 
+
+//show size
+document.getElementById('size').innerHTML=`[${32*32/size}x${32*32/size}]`;
 
 let helpCanvas = document.createElement('canvas'); // canvas for drawing
 let helpCtx = helpCanvas.getContext("2d");
@@ -106,8 +110,8 @@ function adding(old,cloning){
         paint=true;
         //set draw (if eraser was last)
         ctx.globalCompositeOperation = 'source-over';
-        startX=Math.ceil((parseInt(e.clientX-this.getBoundingClientRect().left)-16)/16)*16;
-        startY=Math.ceil((parseInt(e.clientY-this.getBoundingClientRect().top)-16)/16)*16;
+        startX=Math.ceil((parseInt(e.clientX-this.getBoundingClientRect().left)-16)/16)*16*size/32;
+        startY=Math.ceil((parseInt(e.clientY-this.getBoundingClientRect().top)-16)/16)*16*size/32;
     };
     helpCanvas.onmousemove=function(e){
         if(paint){
@@ -154,21 +158,20 @@ function adding(old,cloning){
     //LISTENERS FOR CANVAS
     canvas.onmousedown=function(e){
         paint=true;
-        
-        let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16)/16)*16;
-        let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16)/16)*16;
+        console.log(size);
+        let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16*size/32)/(16*size/32))*16*size/32;
+        let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16*size/32)/(16*size/32))*16*size/32;
         
         if(paint) {
             ctx.beginPath();
             if(tooltype==='draw') {
                 ctx.globalCompositeOperation = 'source-over';
-                ctx.fillRect(mousex, mousey,16, 16);
+                ctx.fillRect(mousex, mousey,16*size/32, 16*size/32);
             }
         
             else if(tooltype==='erase') {
                 ctx.globalCompositeOperation = 'destination-out';
-                ctx.lineWidth = 10;
-                ctx.fillRect(mousex, mousey,16, 16);
+                ctx.fillRect(mousex, mousey,16*size/32, 16*size/32);
             }
         last_mousex = mousex;
         last_mousey = mousey;
@@ -176,12 +179,13 @@ function adding(old,cloning){
     };
     
     canvas.onmousemove=function(e){
-        let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16)/16)*16;
-        let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16)/16)*16;
+        let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16*size/32)/(16*size/32))*16*size/32;
+        let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16*size/32)/(16*size/32))*16*size/32;
         mousex<0?mousex=0:1;
         mousey<0?mousey=0:1;
         
         document.getElementById('coordinates').innerHTML=`[${mousex/16};${mousey/16}]`;
+        
         if(paint) {
             ctx.beginPath();
             if(tooltype==='draw') {
@@ -190,7 +194,6 @@ function adding(old,cloning){
             }
             else if(tooltype==='erase') {
                 ctx.globalCompositeOperation = 'destination-out';
-                ctx.lineWidth = 10;
                 line(last_mousex,mousex,last_mousey, mousey, ctx);
             }
         }
@@ -246,13 +249,12 @@ function line(x1, x2, y1, y2, ctx){
     ctx.fillStyle = color;
     let deltaX = Math.abs(x2 - x1);
     let deltaY = Math.abs(y2 - y1);
-    let signX=x1<x2?16:-16;
-    let signY=y1<y2?16:-16;
+    let signX=x1<x2?(16*size/32):-(16*size/32);
+    let signY=y1<y2?(16*size/32):-(16*size/32);
     let error = deltaX-deltaY;
-    ctx.fillRect(x2, y2,16, 16);
+    ctx.fillRect(x2, y2,16*size/32, 16*size/32);
     while(x1!==x2||y1!==y2){
-        
-        ctx.fillRect(x1, y1,16, 16);
+        ctx.fillRect(x1, y1,16*size/32, 16*size/32);
         let error2=error*2;
         if(error2>-deltaY){
             error-=deltaY;
@@ -342,6 +344,10 @@ function use_tool (tool,element) {
 }
 function choose_color (setColor) {
     color = setColor; //update
+}
+function change_size (setSize) {
+    size = setSize; //update
+    document.getElementById('size').innerHTML=`[${32*32/size}x${32*32/size}]`;
 }
 /*___________________________________________________________*/
 

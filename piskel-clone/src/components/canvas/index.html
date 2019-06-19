@@ -58,16 +58,18 @@
     <div id="editorWithHelpCanvas">
         <div id="editor">
         </div>
-        <p id="coordinates"/>
+        <span id="coordinates"></span>
+        <span id="size"></span>
+        <button id="size64" onclick="change_size(16)">size64</button>
+        <button id="size128" onclick="change_size(8)">size128</button>
+
     </div>
 
     <div class="animation">
         <div id="player"></div>
         <input type="range" id="fps" oninput="sizeFps()" min="0" max="30" step="1" value="15">
         <p id="fpsAmount"/>
-
     </div>
-
 </div>
 
 
