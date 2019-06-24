@@ -8,8 +8,12 @@ let ifRuns=false;
 let color='red';
 let size = 1; //for tool size
 let sizeCanvas = 32; //default
+
 let currentCtx;
 let currentCanvas;
+let sizeButton=document.getElementById('size32');
+sizeButton.classList.toggle('active');
+
 
 //show size
 document.getElementById('size').innerHTML=`[${sizeCanvas}x${sizeCanvas}]`;
@@ -20,8 +24,6 @@ helpCanvas.setAttribute('width', '512');
 helpCanvas.setAttribute('height', '512');
 helpCanvas.setAttribute('id', 'helpCanvas');
 let helpImage = new Image;
-
-
 
 //for drawing
 let startX;
@@ -40,15 +42,11 @@ function adding(old,cloning){
     //ctx.scale(4,4);
     let paint=false;
     
-    
-    
-
     //if edit frame - draw at first old frame state
     if(old){
         //apply the old canvas to the new one
         ctx.drawImage(old, 0, 0);
         CurrentFrameId=old.id.slice(6,);
-
     }
     
     //if new frame - create empty image to frame-list or clonning frame
@@ -61,7 +59,6 @@ function adding(old,cloning){
         image.onclick=function(){
             //delete active from previous
             if(lastActiveFrame){
-                console.log(lastActiveFrame);
                 lastActiveFrame.classList.toggle('active');
             }
             image.classList.toggle('active');
@@ -69,10 +66,10 @@ function adding(old,cloning){
             //send it to editor
             adding(this);
             if(tooltype==='line'){
-                use_tool('line');
+                document.getElementById('editorWithHelpCanvas').lastChild.remove();
+                document.getElementById('editorWithHelpCanvas').appendChild(helpCanvas);
             }
         };
-        
         if(lastActiveFrame){
             lastActiveFrame.classList.toggle('active');
         }
@@ -80,13 +77,14 @@ function adding(old,cloning){
         lastActiveFrame=image;
         number++;
         
-        
         let buttonDelete = document.createElement('button');
         buttonDelete.setAttribute("class", "actFrame");
         buttonDelete.innerText='delete';
         buttonDelete.onclick=function(e){
             if(this.parentNode.parentNode.childNodes.length>1){
                 document.getElementById('canvas0').click();
+                /*image.classList.toggle('active');
+                lastActiveFrame=document.getElementById('canvas0');*/
                 this.parentNode.remove();
                 if(ifRuns){
                     run();
@@ -99,14 +97,12 @@ function adding(old,cloning){
         buttonClone.innerText='clone';
         buttonClone.onclick = function(){
             adding(this.parentNode.childNodes[0],'cloning');
-            console.log(this.parentNode.childNodes[0]);
         };
         
         let temp = document.createElement('div');
         temp.appendChild(image);
         temp.appendChild(buttonDelete);
         temp.appendChild(buttonClone);
-        
         document.getElementById('root').appendChild(temp);
     }
     
@@ -115,13 +111,13 @@ function adding(old,cloning){
         paint=true;
         //set draw (if eraser was last)
         ctx.globalCompositeOperation = 'source-over';
-        startX=Math.ceil((parseInt(e.clientX-this.getBoundingClientRect().left)-16)/16)*16*size/32;
-        startY=Math.ceil((parseInt(e.clientY-this.getBoundingClientRect().top)-16)/16)*16*size/32;
+        startX=Math.ceil((parseInt(e.clientX-this.getBoundingClientRect().left)-16*size/(sizeCanvas/32))/(16*size/(sizeCanvas/32)))*16*size/(sizeCanvas/32);
+        startY=Math.ceil((parseInt(e.clientY-this.getBoundingClientRect().top)-16*size/(sizeCanvas/32))/(16*size/(sizeCanvas/32)))*16*size/(sizeCanvas/32);
     };
     helpCanvas.onmousemove=function(e){
         if(paint){
-            let mousex = Math.ceil((parseInt(e.clientX-this.getBoundingClientRect().left)-16)/16)*16;
-            let mousey = Math.ceil((parseInt(e.clientY-this.getBoundingClientRect().top)-16)/16)*16;
+            let mousex = Math.ceil((parseInt(e.clientX-this.getBoundingClientRect().left)-16*size/(sizeCanvas/32))/(16*size/(sizeCanvas/32)))*16*size/(sizeCanvas/32);
+            let mousey = Math.ceil((parseInt(e.clientY-this.getBoundingClientRect().top)-16*size/(sizeCanvas/32))/(16*size/(sizeCanvas/32)))*16*size/(sizeCanvas/32);
             if(tooltype==='line'){
                 helpCtx.clearRect(0, 0, 512, 512);
                 helpCtx.beginPath();
@@ -137,27 +133,18 @@ function adding(old,cloning){
             helpImage.onload=function(){
                 ctx.drawImage(helpImage, 0, 0);
                 image.src=canvas.toDataURL("image/png");
+                console.log(document.getElementById(String('canvas' + CurrentFrameId)));
                 image.setAttribute('id', String('canvas' + CurrentFrameId));
                 image.setAttribute("class", "canvas");
-                //image.classList.toggle('active');
-                image.onclick=function(){
-                    //delete active from previous
-                    if(lastActive){
-                        lastActive.classList.toggle('active');
-                    }
-                    image.classList.toggle('active');
-                    lastActive=image;
-                    //send it to editor
-                    adding(this);
-                };
-                lastActive=image;
+                document.getElementById(String('canvas' + CurrentFrameId)).parentNode.replaceChild(image,document.getElementById(String('canvas' + CurrentFrameId)));
+                lastActiveFrame=image;
                 image.classList.toggle('active');
             };
         }
         if (ifRuns) {
             run();
         }
-        helpCtx.clearRect(0, 0, 512, 512);;
+        helpCtx.clearRect(0, 0, 512, 512);
     };
     
     //LISTENERS FOR CANVAS
@@ -187,7 +174,7 @@ function adding(old,cloning){
         mousex<0?mousex=0:1;
         mousey<0?mousey=0:1;
         
-        document.getElementById('coordinates').innerHTML=`[${mousex*32/(16*size)};${mousey*32/(16*size)}]`;
+        document.getElementById('coordinates').innerHTML=`[${mousex/(16/(sizeCanvas/32))};${mousey/(16/(sizeCanvas/32))}]`;
         
         if(paint) {
             ctx.beginPath();
@@ -208,25 +195,22 @@ function adding(old,cloning){
         image.src=canvas.toDataURL("image/png");
         image.setAttribute('id', String('canvas' + CurrentFrameId));
         image.setAttribute("class", "canvas");
-        //image.classList.toggle('active');
         image.onclick=function(){
             //delete active from previous
-            if(lastActive){
-                lastActive.classList.toggle('active');
+            if(lastActiveFrame){
+                lastActiveFrame.classList.toggle('active');
             }
             image.classList.toggle('active');
-            lastActive=image;
+            lastActiveFrame=image;
             //send it to editor
             adding(this);
+            if(tooltype==='line'){
+                document.getElementById('editorWithHelpCanvas').lastChild.remove();
+                document.getElementById('editorWithHelpCanvas').appendChild(helpCanvas);
+            }
         };
-        lastActive=image;
+        lastActiveFrame=image;
         image.classList.toggle('active');
-        
-        if(tooltype==='line'){
-            helpImage.src=helpCanvas.toDataURL("image/png");
-            ctx.drawImage(helpImage, 0, 0);
-        }
-        
         if(ifRuns){
             run();
         }
@@ -238,12 +222,8 @@ function adding(old,cloning){
         
    };
     
-    
     document.getElementById('editor').innerHTML='';
     document.getElementById('editor').appendChild(canvas);
-    
-    
-    
 }
 
 let player = document.getElementById('player');
@@ -328,7 +308,6 @@ function use_tool (tool,element) {
 
     element.classList.toggle('active');
     toolButtonPushed=element;
-    console.log('element');
     
     if(tooltype==='line'){
         document.getElementById('editorWithHelpCanvas').lastChild.remove();
@@ -344,9 +323,9 @@ function choose_color (setColor) {
 }
 function change_size (setSize) {
     size = setSize; //update
-    
+
 }
-function change_sizeCanvas (setSize) {
+function change_sizeCanvas (setSize, element) {
     let tempImage = new Image();
     tempImage.src=currentCanvas.toDataURL("image/png");
     tempImage.onload=function(){
@@ -362,10 +341,13 @@ function change_sizeCanvas (setSize) {
             run();
         }
         document.getElementById('size').innerHTML=`[${sizeCanvas}x${sizeCanvas}]`;
+    };
+    
+    sizeButton.classList.toggle('active');
+    sizeButton=element;
+    element.classList.toggle('active');
 }
-   
 
-}
 /*___________________________________________________________*/
 
 

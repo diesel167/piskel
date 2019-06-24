@@ -63,11 +63,17 @@
     <div id="editorWithHelpCanvas">
         <div id="editor">
         </div>
-        <span id="coordinates"></span>
-        <span id="size"></span>
-        <button  onclick="change_sizeCanvas(32)">canvas32</button>
-        <button  onclick="change_sizeCanvas(64)">canvas64</button>
-        <button  onclick="change_sizeCanvas(128)">canvas128</button>
+        <div class="canvasInfo">
+            <span id="coordinates"></span>
+            <span id="size"></span>
+        </div>
+
+        <div class="canvasSize">
+            <button  id="size32" onclick="change_sizeCanvas(32,this)">32x32</button>
+            <button  id="size64" onclick="change_sizeCanvas(64,this)">64x64</button>
+            <button  id="size128" onclick="change_sizeCanvas(128,this)">128x128</button>
+        </div>
+
     </div>
 
     <div class="animation">

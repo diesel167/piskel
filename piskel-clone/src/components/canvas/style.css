@@ -317,3 +317,24 @@ button#add:hover{
     text-align: center;
     line-height: 50px;
 }
+
+
+.canvasSize{
+    display: block;
+}
+
+.canvasSize button{
+    box-shadow: none;
+    height: 30px;
+    width: 90px;
+    border-radius: 7px;
+    border: 2px solid rgba(160, 160, 160, 0.57);
+    background-color: #2b2b2b;
+    color: rgba(160, 160, 160, 0.57);
+}
+
+
+.canvasSize button:hover{
+    border: 2px solid yellow;
+    transition: 0.2s ease-in-out;
+}
