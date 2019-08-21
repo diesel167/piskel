@@ -10,35 +10,7 @@
 <header>
     <div class="header">CodeJam - Animation Player</div>
 </header>
-<!-- <div class="palette">
-    <button class="bucket" id="bucket">
-        <span class="bucketImg"></span>Paint bucket
-    </button>
-    <button class="picker" id="picker">
-        <span class="pickerImg"></span>Choose color
-    </button>
-    <button class="move" id="move">
-        <span class="moveImg"></span>Move
-    </button>
-    <button class="transform" id="transform">
-        <span class="transformImg"></span>Transform
-    </button>
-</div>
 
-<div class="colors">
-    <button id="currentColor">
-        <span id="currentColorImg" class="colorForPicker"></span>currentColor
-    </button>
-    <button id="prevColor">
-        <span id="prevColorImg" class="colorForPicker"></span>prevColor</button>
-    <button id="Blue">
-        <span class="colorForPicker"></span>Blue
-    </button>
-    <button id="Red">
-        <span class="colorForPicker"></span>Red
-    </button>
-</div>
--->
 <div class="container">
     <div class="tools">
         <div class="penSize">
@@ -49,9 +21,11 @@
         <button id="draw" onclick="use_tool('draw',this)">pen</button>
         <button id="erase" onclick="use_tool('erase',this)">erase</button>
         <button id="line" onclick="use_tool('line',this)">line</button>
+        <button id="bucket" onclick="use_tool('bucket',this)">bucket</button>
+        <button id="lighten" onclick="use_tool('invert',this)">invert</button>
 
-        <button id="red" onclick="choose_color('red')"/>
-        <button id="green" onclick="choose_color('green')"/>
+        <button id="red" onclick="choose_color('rgb(255,0,0,255)')"/>
+        <button id="green" onclick="choose_color('rgb(0,255,0,255)')"/>
         <button id="run" onclick="run()">Play</button>
         <button id="stop" onclick="stop()">Stop</button>
     </div>

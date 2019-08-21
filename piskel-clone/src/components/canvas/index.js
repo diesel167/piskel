@@ -5,10 +5,12 @@ let toolButtonPushed='';
 use_tool('draw',document.getElementById('draw'));
 let lastActiveFrame='';
 let ifRuns=false;
-let color='red';
+let color="rgb(255,0,0,255)";
 let size = 1; //for tool size
 let sizeCanvas = 32; //default
 
+
+let imageData;
 let currentCtx;
 let currentCanvas;
 let sizeButton=document.getElementById('size32');
@@ -82,9 +84,9 @@ function adding(old,cloning){
         buttonDelete.innerText='delete';
         buttonDelete.onclick=function(e){
             if(this.parentNode.parentNode.childNodes.length>1){
-                document.getElementById('canvas0').click();
-                /*image.classList.toggle('active');
-                lastActiveFrame=document.getElementById('canvas0');*/
+                document.getElementById('root').childNodes[0].click();
+                console.log( document.getElementById('root').childNodes[0]);
+
                 this.parentNode.remove();
                 if(ifRuns){
                     run();
@@ -159,13 +161,121 @@ function adding(old,cloning){
                 ctx.globalCompositeOperation = 'source-over';
                 ctx.fillRect(mousex, mousey,16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
             }
-        
             else if(tooltype==='erase') {
                 ctx.globalCompositeOperation = 'destination-out';
-                ctx.fillRect(mousex, mousey,16/(sizeCanvas/32), 16/(sizeCanvas/32));
+                ctx.fillRect(mousex, mousey,16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
             }
-        last_mousex = mousex;
-        last_mousey = mousey;
+            else if(tooltype==='invert') {
+                imageData = ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) );
+                console.log(Boolean(imageData.data.some(pixel=>pixel!==0)));
+                let data = imageData.data;
+
+                for (let i = 0; i < data.length; i += 4) {
+                    data[i]     = 255 - data[i];     // red
+                    data[i + 1] = 255 - data[i + 1]; // green
+                    data[i + 2] = 255 - data[i + 2]; // blue
+                }
+
+                ctx.putImageData(imageData, mousex, mousey);
+            }
+            else if (tooltype==='bucket'){
+                let x = mousex;
+                let y = mousey;
+
+                let initialColor = "rgb("
+                    +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                    +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                    +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                    +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+
+                let pixelStack=[[x,y]];  //stack for vertical lines for coloring
+
+                while(pixelStack.length){
+                    let newxy = pixelStack.pop();
+                    let reachLeft = false;
+                    let reachRight = false;
+                    x = newxy[0];
+                    y = newxy[1];
+                    let currentPixelColor = "rgb("
+                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+                    console.log(currentPixelColor===initialColor);
+                    while(y>0 && currentPixelColor===initialColor ){
+                        currentPixelColor = "rgb("
+                            +255-ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                            +255-ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                            +255-ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                            +255-ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+                        y-=16/(sizeCanvas/32);
+                    }
+
+                    //reset
+                    y+=16/(sizeCanvas/32);
+                    currentPixelColor = "rgb("
+                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+
+                    while (y+16/(sizeCanvas/32) <= 512 && currentPixelColor===initialColor) {
+
+
+                        let rgb = color.substring(4, color.length-1)
+                            .replace(/ /g, '')
+                            .split(',');
+
+                        let img = ctx.getImageData(x, y - 16/(sizeCanvas/32) , 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
+                        let data = img.data;
+                        for (let i = 0; i < data.length; i += 4) {
+                            data[i]     = rgb[0];     // red
+                            data[i + 1] = rgb[1]; // green
+                            data[i + 2] = rgb[2]; // blue
+                        }
+                        ctx.putImageData(img, x, y - 16/(sizeCanvas/32));
+                        //move left
+                        if (x > 0) {
+                            if ("rgb("
+                                +255-ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                                +255-ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                                +255-ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                                +255-ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")" === initialColor) {
+                                if (!reachLeft) {
+                                    pixelStack.push([x - 16/(sizeCanvas/32), y - 16/(sizeCanvas/32)]);
+                                    reachLeft = true;
+                                }
+                            }
+                            else if (reachLeft) {
+                                reachLeft = false;
+                            }
+                        }
+                        //move right
+                        if(x < 512){
+                            if("rgb("
+                                +255-ctx.getImageData(x+16/(sizeCanvas/32), y+16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                                +255-ctx.getImageData(x+16/(sizeCanvas/32), y+16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                                +255-ctx.getImageData(x+16/(sizeCanvas/32), y+16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                                +255-ctx.getImageData(x+16/(sizeCanvas/32), y+16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")"===initialColor){
+                                if(!reachRight){
+                                    pixelStack.push([x+16/(sizeCanvas/32),y-16/(sizeCanvas/32)]);
+                                    reachRight = true;
+                                }
+                            }
+                            else if(reachRight){
+                                reachRight = false;
+                            }
+                        }
+                        currentPixelColor = "rgb("
+                            +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                            +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                            +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                            +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+                    }
+               }
+            }
+            last_mousex = mousex;
+            last_mousey = mousey;
         }
     };
     canvas.onmousemove=function(e){
@@ -185,6 +295,28 @@ function adding(old,cloning){
             else if(tooltype==='erase') {
                 ctx.globalCompositeOperation = 'destination-out';
                 line(last_mousex,mousex,last_mousey, mousey, ctx);
+            }
+            else if(tooltype==='invert') {
+                if(ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32)).data.slice(0,4).some(pixel=>pixel!==0)){
+                    ctx.fillStyle = "rgb("
+                        +255-ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                        +255-ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                        +255-ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                        +255-ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+
+                    console.log(ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]);
+                    let temp = ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
+                    let data = temp.data;
+                    console.log(mousex);
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i]     = 255 - data[i];     // red
+                        data[i + 1] = 255 - data[i + 1]; // green
+                        data[i + 2] = 255 - data[i + 2]; // blue
+                    }
+                    if(mousex!==last_mousex || mousey!==last_mousey){
+                        ctx.putImageData(temp, mousex, mousey);
+                    }
+                }
             }
         }
         last_mousex = mousex;
@@ -230,13 +362,17 @@ let player = document.getElementById('player');
 
 //алгоритм Брезенхема
 function line(x1, x2, y1, y2, ctx){
+
     ctx.fillStyle = color;
+
     let deltaX = Math.abs(x2 - x1);
     let deltaY = Math.abs(y2 - y1);
     let signX=x1<x2?(16/(sizeCanvas/32)):-(16/(sizeCanvas/32));
     let signY=y1<y2?(16/(sizeCanvas/32)):-(16/(sizeCanvas/32));
     let error = deltaX-deltaY;
+
     ctx.fillRect(x2, y2,16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
+
     while(x1!==x2||y1!==y2){
         ctx.fillRect(x1, y1,16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
         let error2=error*2;
@@ -249,7 +385,6 @@ function line(x1, x2, y1, y2, ctx){
             y1+=signY;
         }
     }
-    
 }
 /*___________________________________________________________*/
 
