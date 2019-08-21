@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Animation Player</title>
+</head>
+<body>
+<header>
+    <div class="header">CodeJam - Animation Player</div>
+</header>
+<!-- <div class="palette">
+    <button class="bucket" id="bucket">
+        <span class="bucketImg"></span>Paint bucket
+    </button>
+    <button class="picker" id="picker">
+        <span class="pickerImg"></span>Choose color
+    </button>
+    <button class="move" id="move">
+        <span class="moveImg"></span>Move
+    </button>
+    <button class="transform" id="transform">
+        <span class="transformImg"></span>Transform
+    </button>
+</div>
+
+<div class="colors">
+    <button id="currentColor">
+        <span id="currentColorImg" class="colorForPicker"></span>currentColor
+    </button>
+    <button id="prevColor">
+        <span id="prevColorImg" class="colorForPicker"></span>prevColor</button>
+    <button id="Blue">
+        <span class="colorForPicker"></span>Blue
+    </button>
+    <button id="Red">
+        <span class="colorForPicker"></span>Red
+    </button>
+</div>
+-->
+<div class="container">
+    <div class="tools">
+        <div class="penSize">
+            <button id="size1" onclick="change_size(1)"/>
+            <button id="size2" onclick="change_size(2)"/>
+            <button id="size3" onclick="change_size(3)"/>
+        </div>
+        <button id="draw" onclick="use_tool('draw',this)">pen</button>
+        <button id="erase" onclick="use_tool('erase',this)">erase</button>
+        <button id="line" onclick="use_tool('line',this)">line</button>
+
+        <button id="red" onclick="choose_color('red')"/>
+        <button id="green" onclick="choose_color('green')"/>
+        <button id="run" onclick="run()">Play</button>
+        <button id="stop" onclick="stop()">Stop</button>
+    </div>
+    <div class="frames">
+        <div id="root"></div>
+        <button id="add" onclick="adding()">Add new frame</button>
+    </div>
+
+    <div id="editorWithHelpCanvas">
+        <div id="editor">
+        </div>
+        <div class="canvasInfo">
+            <span id="coordinates"></span>
+            <span id="size"></span>
+        </div>
+
+        <div class="canvasSize">
+            <button  id="size32" onclick="change_sizeCanvas(32,this)">32x32</button>
+            <button  id="size64" onclick="change_sizeCanvas(64,this)">64x64</button>
+            <button  id="size128" onclick="change_sizeCanvas(128,this)">128x128</button>
+        </div>
+
+    </div>
+
+    <div class="animation">
+        <div id="player"></div>
+        <input type="range" id="fps" oninput="sizeFps()" min="0" max="30" step="1" value="15">
+        <p id="fpsAmount"/>
+    </div>
+</div>
+
+
+
+<script src="index.js"></script>
+</body>
+</html>

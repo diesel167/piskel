@@ -1,0 +1,47 @@
+body{
+    background-color: #2b2b2b;
+    padding: 0;
+    margin: 0;
+    font-family: 'Maven Pro Regular', sans-serif;
+    text-align: center;
+    padding-top: 5%;
+}
+
+h2{
+    font-size: 2em;
+    color: #f7f7f7;
+
+}
+
+header>p{
+    color: #f7f7f7;
+    font-style: italic;
+    margin-bottom: 50px;
+}
+
+input{
+
+    box-shadow: none;
+    height: 54px;
+    width: 90px;
+    border-radius: 7px;
+    border: 2px solid rgba(160, 160, 160, 0.57);
+    background-color: #2b2b2b;
+    color: rgba(160, 160, 160, 0.57);
+}
+
+input:hover{
+    border: 2px solid yellow;
+    color: #dff0d8;
+    cursor: pointer;
+    outline: none;
+    transition: 0.2s ease-in-out;
+}
+
+.author{
+    color: rgba(160, 160, 160, 0.57);
+    font-size: .8em;
+    position: absolute;
+    bottom: 20px;
+    left: 47%;
+}

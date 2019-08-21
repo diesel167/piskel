@@ -1,0 +1,340 @@
+*{
+    box-sizing: border-box;
+    outline: none;
+    user-select: none;
+}
+
+body{
+    background-color: #2b2b2b;
+    padding: 0;
+    margin: 0;
+    font-family: 'Maven Pro Regular', sans-serif;
+    color: #2b2b2b;
+}
+
+
+.container{
+    display: grid;
+    padding: 20px;
+    width: 100%;
+    grid-template-rows: 100%;
+    grid-template-columns: 100px 20% 1fr 20%;
+    grid-gap: 2vw;
+}
+
+.palette{
+    width: 20%;
+    margin: 20px;
+    display: inline-block;
+    vertical-align: top;
+    background-color: red;
+    box-shadow: 0 3px 6px -2px black;
+}
+.colors{
+    margin: 20px;
+    box-shadow: 0 3px 6px -2px black;
+}
+.palette button {
+    display: block;
+    outline: 0 !important;
+    border: none;
+    background-color: white;
+    height: calc((100vh - 30px - 1vh - 80px)/8);
+    width: 100%;
+    line-height: 30px;
+    text-align: left;
+}
+.colors button {
+    display: block;
+    outline: 0 !important;
+    border: none;
+    background-color: white;
+    height: calc((100vh - 30px - 1vh - 80px)/8);
+    width: 10%;
+    line-height: 30px;
+    text-align: left;
+}
+button:hover{
+    cursor:pointer;
+    transition:0.2s ease-in-out;
+}
+.bucketImg:hover{
+    transform: scale(1.2);
+}
+.moveImg:hover{
+    transform: scale(1.2);
+}
+.pickerImg:hover{
+    transform: scale(1.2);
+}
+.transformImg:hover{
+    transform: scale(1.2);
+}
+#currentColorImg{
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-right: 20px;
+}
+#prevColorImg{
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-right: 20px;
+}
+#Blue>.colorForPicker{
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-right: 20px;
+    background-color: rgb(64, 65, 195);
+}
+#Red>.colorForPicker{
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-right: 20px;
+    background-color: rgb(195, 49, 27);
+}
+
+
+
+.active{
+    border:2px solid #fff201 !important;
+}
+
+.tools{
+    display: grid;
+    grid-template-columns: 50px 50px;
+    grid-template-rows: 50px 50px 50px 50px 50px;
+}
+
+.tools button{
+    display:block;
+    width: 50px;
+    height:50px;
+    border: 2px solid rgba(160, 160, 160, 0.57);
+    background-color: #2b2b2b;
+    color: rgba(160, 160, 160, 0.57);
+    box-shadow: none;
+}
+
+.tools button:hover {
+    border:2px solid #fff201 !important;
+}
+
+button#add {
+    box-shadow: none;
+    height: 54px;
+    width: 90px;
+    border-radius: 7px;
+    border: 2px solid rgba(160, 160, 160, 0.57);
+    background-color: #2b2b2b;
+    color: rgba(160, 160, 160, 0.57);
+
+}
+button#add:hover{
+    border: 2px solid yellow;
+    transition: 0.2s ease-in-out;
+}
+
+
+
+
+#player{
+    width:256px;
+    height: 256px;
+    border: 2px solid #4f86ff;
+    display: inline-block;
+    vertical-align: top;
+    outline: none;
+    background-color: rgba(181, 181, 181, 0.51);
+    background-image: linear-gradient( 45deg, #828282 25%, transparent 25%, transparent 74%, #828282 75%, #828282),
+    linear-gradient( 45deg, #828282 25%, transparent 25%, transparent 74%, #828282 75%, #828282);
+    background-size:10px 10px;
+    background-position: 0 0, 5px 5px;
+}
+
+#editor{
+    width:512px;
+    height: 512px;
+    box-sizing: content-box;
+    display: inline-block;
+    vertical-align: top;
+    outline: none;
+    background-color: rgba(128, 128, 128, 0.51);
+    background-image: linear-gradient( 45deg, #4b4b4b 25%, transparent 25%, transparent 74%, #4b4b4b 75%, #4b4b4b),
+    linear-gradient( 45deg, #4b4b4b 25%, transparent 25%, transparent 74%, #4b4b4b 75%, #4b4b4b);
+    background-size:30px 30px;
+    background-position: 0 0, 15px 15px;
+}
+
+#editorWithHelpCanvas{
+    position: relative;
+}
+
+#root img{
+    position: relative;
+    display: block;
+    border: 2px solid rgba(87, 87, 57, 0.81);
+    padding: 0;
+    background-color: rgba(183, 183, 183, 0.51);
+    background-image: linear-gradient( 45deg, #4b4b4b 25%, transparent 25%, transparent 74%, #4b4b4b 75%, #4b4b4b),
+    linear-gradient( 45deg, #4b4b4b 25%, transparent 25%, transparent 74%, #4b4b4b 75%, #4b4b4b);
+    background-size:10px 10px;
+    background-position: 0 0, 5px 5px;
+    opacity: .7;
+
+}
+
+#root img:hover{
+    border: 2px solid rgba(160, 160, 160, 0.57);
+    transition: 0.2s ease-in-out;
+}
+
+.actFrame{
+    position: relative;
+    box-shadow: none;
+    margin-bottom: 2px;
+    height: 30px;
+    width: 45px;
+    border-radius: 7px;
+    font-size: .8em;
+    border: 2px solid rgba(160, 160, 160, 0.57);
+    background-color: #2b2b2b;
+    color: rgba(160, 160, 160, 0.57);
+    z-index: 50;
+}
+.actFrame:nth-child(3){
+    display: inline-block;
+}
+
+
+.actFrame:hover{
+    border: 2px solid yellow;
+    transition: 0.2s ease-in-out;
+}
+
+.canvas{
+    width:90px;
+    height:90px;
+
+}
+
+#fpsAmount{
+    display: inline-block;
+    color: white;
+}
+
+#red{
+    height:50px;
+    width:50px;
+    background-color:red;
+}
+
+#green{
+    height:50px;
+    width:50px;
+    background-color:green;
+}
+
+#helpCanvas{
+    width: 512px;
+    height: 512px;
+    box-sizing: content-box;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index:100;
+}
+
+#coordinates{
+    width: 80px;
+    height: 20px;
+    color: white;
+
+}
+
+#size{
+    width: 80px;
+    height: 20px;
+    color: white;
+}
+
+.penSize{
+    width: 100px;
+    height: 50px;
+    grid-column: 1 / 3;
+    text-align: center;
+
+}
+
+.penSize button{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin: 1px;
+    padding: 0;
+}
+
+
+
+#size1:before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    margin: 10px;
+    background-color: white;
+    display: block;
+    text-align: center;
+    line-height: 50px;
+}
+
+
+#size2:before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    margin: 7px;
+    background-color: white;
+    display: block;
+    text-align: center;
+    line-height: 50px;
+}
+
+#size3:before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    margin: 5px;
+    background-color: white;
+    display: block;
+    text-align: center;
+    line-height: 50px;
+}
+
+
+.canvasSize{
+    display: block;
+}
+
+.canvasSize button{
+    box-shadow: none;
+    height: 30px;
+    width: 90px;
+    border-radius: 7px;
+    border: 2px solid rgba(160, 160, 160, 0.57);
+    background-color: #2b2b2b;
+    color: rgba(160, 160, 160, 0.57);
+}
+
+
+.canvasSize button:hover{
+    border: 2px solid yellow;
+    transition: 0.2s ease-in-out;
+}
