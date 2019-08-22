@@ -183,64 +183,68 @@ function adding(old,cloning){
                 let y = mousey;
 
                 let initialColor = "rgb("
-                    +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                    +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                    +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                    +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+                    +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                    +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                    +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                    +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+                
 
                 let pixelStack=[[x,y]];  //stack for vertical lines for coloring
-
+                
                 while(pixelStack.length){
                     let newxy = pixelStack.pop();
                     let reachLeft = false;
                     let reachRight = false;
                     x = newxy[0];
                     y = newxy[1];
+                    
                     let currentPixelColor = "rgb("
-                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
-                    console.log(currentPixelColor===initialColor);
-                    while(y>0 && currentPixelColor===initialColor ){
+                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+                    while(y>=0 && currentPixelColor===initialColor ){
                         currentPixelColor = "rgb("
-                            +255-ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                            +255-ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                            +255-ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                            +255-ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+                            +ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                            +ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                            +ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                            +ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
                         y-=16/(sizeCanvas/32);
                     }
 
                     //reset
                     y+=16/(sizeCanvas/32);
                     currentPixelColor = "rgb("
-                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                        +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
 
-                    while (y+16/(sizeCanvas/32) <= 512 && currentPixelColor===initialColor) {
-
-
+                    ///////////////
+                    while (y+16/(sizeCanvas/32) < 512 && currentPixelColor===initialColor) {
+                        y+=16/(sizeCanvas/32);
+                        console.log(y);
                         let rgb = color.substring(4, color.length-1)
                             .replace(/ /g, '')
                             .split(',');
-
+                        
                         let img = ctx.getImageData(x, y - 16/(sizeCanvas/32) , 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
                         let data = img.data;
                         for (let i = 0; i < data.length; i += 4) {
                             data[i]     = rgb[0];     // red
                             data[i + 1] = rgb[1]; // green
                             data[i + 2] = rgb[2]; // blue
+                            data[i + 3] = rgb[3]; //ligthning
                         }
                         ctx.putImageData(img, x, y - 16/(sizeCanvas/32));
+                        
                         //move left
                         if (x > 0) {
                             if ("rgb("
-                                +255-ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                                +255-ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                                +255-ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                                +255-ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")" === initialColor) {
+                                +ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                                +ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                                +ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                                +ctx.getImageData(x-16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")" === initialColor) {
                                 if (!reachLeft) {
                                     pixelStack.push([x - 16/(sizeCanvas/32), y - 16/(sizeCanvas/32)]);
                                     reachLeft = true;
@@ -253,10 +257,10 @@ function adding(old,cloning){
                         //move right
                         if(x < 512){
                             if("rgb("
-                                +255-ctx.getImageData(x+16/(sizeCanvas/32), y+16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                                +255-ctx.getImageData(x+16/(sizeCanvas/32), y+16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                                +255-ctx.getImageData(x+16/(sizeCanvas/32), y+16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                                +255-ctx.getImageData(x+16/(sizeCanvas/32), y+16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")"===initialColor){
+                                +ctx.getImageData(x+16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                                +ctx.getImageData(x+16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                                +ctx.getImageData(x+16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                                +ctx.getImageData(x+16/(sizeCanvas/32), y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")"===initialColor){
                                 if(!reachRight){
                                     pixelStack.push([x+16/(sizeCanvas/32),y-16/(sizeCanvas/32)]);
                                     reachRight = true;
@@ -267,10 +271,10 @@ function adding(old,cloning){
                             }
                         }
                         currentPixelColor = "rgb("
-                            +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                            +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                            +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                            +255-ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+                            +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
+                            +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
+                            +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
+                            +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
                     }
                }
             }
@@ -278,6 +282,7 @@ function adding(old,cloning){
             last_mousey = mousey;
         }
     };
+    
     canvas.onmousemove=function(e){
         let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16/(sizeCanvas/32))/(16/(sizeCanvas/32)))*16/(sizeCanvas/32);
         let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16/(sizeCanvas/32))/(16/(sizeCanvas/32)))*16/(sizeCanvas/32);
