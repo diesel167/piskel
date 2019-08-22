@@ -126,23 +126,40 @@ function adding(old,cloning){
                 helpCtx.globalCompositeOperation = 'source-over';
                 line(startX,mousex,startY,mousey,helpCtx);
             }
+            if(tooltype==='rectangle'){
+                console.log('got');
+                helpCtx.clearRect(0, 0, 512, 512);
+                helpCtx.beginPath();
+                helpCtx.globalCompositeOperation = 'source-over';
+                let x1 = startX;
+                let y1 = startY;
+                let x3 = mousex;
+                let y3 = mousey;
+                let x2 = x1;
+                let y2 = y3;
+                let x4 = x3;
+                let y4 = y1;
+                line(x1,y1,x2,y2,helpCtx);
+                line(x1,y1,x3,y3,helpCtx);
+                line(x2,y2,x4,y4,helpCtx);
+                line(x3,y3,x4,y4,helpCtx);
+                
+            }
         }
     };
     helpCanvas.onmouseup=function(e) {
         paint=false;
-        if (tooltype === 'line') {
             helpImage.src = helpCanvas.toDataURL("image/png");
             helpImage.onload=function(){
                 ctx.drawImage(helpImage, 0, 0);
                 image.src=canvas.toDataURL("image/png");
-                console.log(document.getElementById(String('canvas' + CurrentFrameId)));
                 image.setAttribute('id', String('canvas' + CurrentFrameId));
                 image.setAttribute("class", "canvas");
                 document.getElementById(String('canvas' + CurrentFrameId)).parentNode.replaceChild(image,document.getElementById(String('canvas' + CurrentFrameId)));
                 lastActiveFrame=image;
                 image.classList.toggle('active');
             };
-        }
+            
         if (ifRuns) {
             run();
         }
@@ -317,7 +334,6 @@ function adding(old,cloning){
         
         if(paint) {
             ctx.beginPath();
-            console.log(tooltype);
             if(tooltype==='draw') {
                 ctx.globalCompositeOperation = 'source-over';
                 line(last_mousex,mousex,last_mousey, mousey, ctx);
@@ -408,7 +424,6 @@ function adding(old,cloning){
         document.getElementById('coordinates').innerHTML='';
         
    };
-    
     document.getElementById('editor').innerHTML='';
     document.getElementById('editor').appendChild(canvas);
 }
@@ -502,7 +517,7 @@ function use_tool (tool,element) {
     if(tooltype==='line'){
     
     }
-    if(tooltype==='circle'){
+    if(tooltype==='rectangle'){
         document.getElementById('editorWithHelpCanvas').lastChild.remove();
     }
     
@@ -510,7 +525,7 @@ function use_tool (tool,element) {
     if(tooltype==='line'){
         document.getElementById('editorWithHelpCanvas').appendChild(helpCanvas);
     }
-    if(tooltype==='circle'){
+    if(tooltype==='rectangle'){
         document.getElementById('editorWithHelpCanvas').appendChild(helpCanvas);
     }
     
