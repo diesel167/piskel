@@ -139,11 +139,10 @@ function adding(old,cloning){
                 let y2 = y3;
                 let x4 = x3;
                 let y4 = y1;
-                line(x1,y1,x2,y2,helpCtx);
-                line(x1,y1,x3,y3,helpCtx);
-                line(x2,y2,x4,y4,helpCtx);
-                line(x3,y3,x4,y4,helpCtx);
-                
+                line(x1,x2,y1,y2,helpCtx);
+                line(x1,x4,y1,y4,helpCtx);
+                line(x2,x3,y2,y3,helpCtx);
+                line(x3,x4,y3,y4,helpCtx);
             }
         }
     };
@@ -323,7 +322,6 @@ function adding(old,cloning){
             last_mousey = mousey;
         }
     };
-    
     canvas.onmousemove=function(e){
         let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16/(sizeCanvas/32))/(16/(sizeCanvas/32)))*16/(sizeCanvas/32);
         let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16/(sizeCanvas/32))/(16/(sizeCanvas/32)))*16/(sizeCanvas/32);
