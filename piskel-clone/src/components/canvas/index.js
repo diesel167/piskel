@@ -8,7 +8,7 @@ let ifRuns=false;
 let color="rgb(255,0,0,255)";
 let size = 1; //for tool size
 let sizeCanvas = 32; //default
-
+let canvasImageForMoving = new Image;;
 
 let imageData;
 let currentCtx;
@@ -170,7 +170,8 @@ function adding(old,cloning){
         paint=true;
         let mousex = Math.ceil((parseInt(e.clientX-canvas.getBoundingClientRect().left)-16*size/(sizeCanvas/32))/(16*size/(sizeCanvas/32)))*16*size/(sizeCanvas/32);
         let mousey = Math.ceil((parseInt(e.clientY-canvas.getBoundingClientRect().top)-16*size/(sizeCanvas/32))/(16*size/(sizeCanvas/32)))*16*size/(sizeCanvas/32);
-        
+        startX=Math.ceil((parseInt(e.clientX-this.getBoundingClientRect().left)-16*size/(sizeCanvas/32))/(16*size/(sizeCanvas/32)))*16*size/(sizeCanvas/32);
+        startY=Math.ceil((parseInt(e.clientY-this.getBoundingClientRect().top)-16*size/(sizeCanvas/32))/(16*size/(sizeCanvas/32)))*16*size/(sizeCanvas/32);
         if(paint) {
             ctx.beginPath();
             if(tooltype==='draw') {
@@ -317,6 +318,9 @@ function adding(old,cloning){
                 }
                 ctx.putImageData(imageData, mousex, mousey);
             }
+            else if (tooltype==='move'){
+                canvasImageForMoving.src = currentCanvas.toDataURL("image/png");
+            }
             
             last_mousex = mousex;
             last_mousey = mousey;
@@ -386,6 +390,17 @@ function adding(old,cloning){
                         ctx.putImageData(temp, mousex, mousey);
                     }
                 }
+            }
+            else if (tooltype==='move'){
+                    currentCtx.clearRect(0, 0, 512, 512);
+                    console.log(canvasImageForMoving.src);
+                    currentCtx.drawImage(canvasImageForMoving, -startX+mousex, -startY+mousey);
+                    image.src=currentCanvas.toDataURL("image/png");
+                    image.setAttribute('id', String('canvas' + CurrentFrameId));
+                    image.setAttribute("class", "canvas");
+                    document.getElementById(String('canvas' + CurrentFrameId)).parentNode.replaceChild(image,document.getElementById(String('canvas' + CurrentFrameId)));
+                    lastActiveFrame=image;
+                    image.classList.toggle('active');
             }
         }
         last_mousex = mousex;
