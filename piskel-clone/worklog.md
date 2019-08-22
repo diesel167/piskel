@@ -9,3 +9,4 @@
 | Jun 16       | Jun 17   | 6h         | debug frame   management, add selection of tools, add coordinates                             |
 | Jun 18       | Jun 19   | 5h         | resizing feature   (pen and canvas sizes)                                                     |
 | Jun 24       | Jun 24   | 5h         | debugging frame  management                                                                   |
+| Jun 21       | Jun 22   | 14h         | bucket tool+invert tool+darken+lighten  tools                                                |

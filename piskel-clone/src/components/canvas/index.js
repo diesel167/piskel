@@ -175,7 +175,6 @@ function adding(old,cloning){
                     data[i + 1] = 255 - data[i + 1]; // green
                     data[i + 2] = 255 - data[i + 2]; // blue
                 }
-
                 ctx.putImageData(imageData, mousex, mousey);
             }
             else if (tooltype==='bucket'){
@@ -220,8 +219,8 @@ function adding(old,cloning){
                         +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
                         +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
 
-                    ///////////////
-                    while (y+16/(sizeCanvas/32) < 512 && currentPixelColor===initialColor) {
+                    
+                    while (y+16/(sizeCanvas/32) <= 512 && currentPixelColor===initialColor) {
                         y+=16/(sizeCanvas/32);
                         console.log(y);
                         let rgb = color.substring(4, color.length-1)
@@ -278,6 +277,31 @@ function adding(old,cloning){
                     }
                }
             }
+            else if(tooltype==='darken'){
+                imageData = ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) );
+                console.log(Boolean(imageData.data.some(pixel=>pixel!==0)));
+                let data = imageData.data;
+    
+                for (let i = 0; i < data.length; i += 4) {
+                    data[i] -= 25;
+                    data[i+1] -= 25;
+                    data[i+2] -= 25;
+                }
+                ctx.putImageData(imageData, mousex, mousey);
+            }
+            else if(tooltype==='lighten'){
+                imageData = ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) );
+                console.log(Boolean(imageData.data.some(pixel=>pixel!==0)));
+                let data = imageData.data;
+    
+                for (let i = 0; i < data.length; i += 4) {
+                    data[i] += 25;
+                    data[i+1] += 25;
+                    data[i+2] += 25;
+                }
+                ctx.putImageData(imageData, mousex, mousey);
+            }
+            
             last_mousex = mousex;
             last_mousey = mousey;
         }
@@ -293,6 +317,7 @@ function adding(old,cloning){
         
         if(paint) {
             ctx.beginPath();
+            console.log(tooltype);
             if(tooltype==='draw') {
                 ctx.globalCompositeOperation = 'source-over';
                 line(last_mousex,mousex,last_mousey, mousey, ctx);
@@ -303,13 +328,6 @@ function adding(old,cloning){
             }
             else if(tooltype==='invert') {
                 if(ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32)).data.slice(0,4).some(pixel=>pixel!==0)){
-                    ctx.fillStyle = "rgb("
-                        +255-ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                        +255-ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                        +255-ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                        +255-ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
-
-                    console.log(ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]);
                     let temp = ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
                     let data = temp.data;
                     console.log(mousex);
@@ -317,6 +335,38 @@ function adding(old,cloning){
                         data[i]     = 255 - data[i];     // red
                         data[i + 1] = 255 - data[i + 1]; // green
                         data[i + 2] = 255 - data[i + 2]; // blue
+                    }
+                    if(mousex!==last_mousex || mousey!==last_mousey){
+                        ctx.putImageData(temp, mousex, mousey);
+                    }
+                }
+            }
+            else if(tooltype==='darken'){
+                if(ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32)).data.slice(0,4).some(pixel=>pixel!==0)){
+                    let temp = ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
+                    let data = temp.data;
+                    
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] -= 25;
+                        data[i+1] -= 25;
+                        data[i+2] -= 25;
+                    }
+                    if(mousex!==last_mousex || mousey!==last_mousey){
+                        ctx.putImageData(temp, mousex, mousey);
+                    }
+                }
+            }
+            else if(tooltype==='lighten'){
+                
+                if(ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32)).data.slice(0,4).some(pixel=>pixel!==0)){
+                    let temp = ctx.getImageData(mousex, mousey, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32));
+                    let data = temp.data;
+        
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] += 25;
+                        data[i+1] += 25;
+                        data[i+2] += 25;
+            
                     }
                     if(mousex!==last_mousex || mousey!==last_mousey){
                         ctx.putImageData(temp, mousex, mousey);
@@ -450,6 +500,9 @@ function use_tool (tool,element) {
     toolButtonPushed=element;
     
     if(tooltype==='line'){
+    
+    }
+    if(tooltype==='circle'){
         document.getElementById('editorWithHelpCanvas').lastChild.remove();
     }
     
@@ -457,6 +510,10 @@ function use_tool (tool,element) {
     if(tooltype==='line'){
         document.getElementById('editorWithHelpCanvas').appendChild(helpCanvas);
     }
+    if(tooltype==='circle'){
+        document.getElementById('editorWithHelpCanvas').appendChild(helpCanvas);
+    }
+    
 }
 function choose_color (setColor) {
     color = setColor; //update
