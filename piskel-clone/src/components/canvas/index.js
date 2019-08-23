@@ -603,7 +603,9 @@ document.addEventListener('keydown', function (event) {
 
 
 
-
-
-
+// Call login API on a click event
+document.getElementById('login').click =  function() {
+    let profile=googleUser.getBasicProfile();
+    console.log(profile.getEmail());
+};
 

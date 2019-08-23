@@ -45,3 +45,11 @@ input:hover{
     bottom: 20px;
     left: 47%;
 }
+
+#start{
+    display: none;
+}
+
+.abcRioButton{
+    margin: 0 auto;
+}

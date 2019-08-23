@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="google-signin-client_id"
+          content="921887490418-dh8els6c6gad6apuiuu84t7rcmu4448p.apps.googleusercontent.com">
+    <script src="login.js"></script>
+
+    <script src="https://apis.google.com/js/client:platform.js?onload=renderButton" async defer></script>
+
+
+
     <link rel="stylesheet" href="style.css">
     <title>Animation Player</title>
 </head>
@@ -11,8 +19,14 @@
     <p>Create animations in your browser.</p>
 </header>
 <form method="LINK" action="../canvas/index.html">
-    <input type="submit" value="Start">
+    <input id="start" type="submit" value="Start">
 </form>
+
+<!-- Display Google sign-in button -->
+<div id="gSignIn"></div>
+
+<!-- Show the user profile details -->
+<div class="userContent" style="display: none;"></div>
 
 <p class="author">Author: Yury Misiyevich</p>
 </body>
