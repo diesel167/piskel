@@ -198,13 +198,8 @@ function adding(old,cloning){
                 let x = mousex;
                 let y = mousey;
 
-                let initialColor = "rgb("
-                    +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                    +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                    +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                    +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
-                
-
+                let initialColor =
+                    `rgb(${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]},${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]},${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]},${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]})`;
                 let pixelStack=[[x,y]];  //stack for vertical lines for coloring
                 
                 while(pixelStack.length){
@@ -214,32 +209,20 @@ function adding(old,cloning){
                     x = newxy[0];
                     y = newxy[1];
                     
-                    let currentPixelColor = "rgb("
-                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
-                    while(y>=0 && currentPixelColor===initialColor ){
-                        currentPixelColor = "rgb("
-                            +ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                            +ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                            +ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                            +ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
-                        y-=16/(sizeCanvas/32);
-                    }
+                    let currentPixelColor = `rgb(${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]},${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]},${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]},${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]})`;
+
+                while(y>=0 && currentPixelColor===initialColor ){
+                    currentPixelColor = `rgb(${ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]},${ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]},${ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]},${ctx.getImageData(x, y-16/(sizeCanvas/32), 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]})`;
+                    y-=16/(sizeCanvas/32);
+                }
 
                     //reset
                     y+=16/(sizeCanvas/32);
-                    currentPixelColor = "rgb("
-                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]+","
-                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]+","
-                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]+","
-                        +ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]+")";
+                    currentPixelColor = `rgb(${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[0]},${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[1]},${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[2]},${ctx.getImageData(x, y, 16*size/(sizeCanvas/32), 16*size/(sizeCanvas/32) ).data[3]})`;
 
                     
                     while (y+16/(sizeCanvas/32) <= 512 && currentPixelColor===initialColor) {
                         y+=16/(sizeCanvas/32);
-                        console.log(y);
                         let rgb = color.substring(4, color.length-1)
                             .replace(/ /g, '')
                             .split(',');
@@ -393,7 +376,6 @@ function adding(old,cloning){
             }
             else if (tooltype==='move'){
                     currentCtx.clearRect(0, 0, 512, 512);
-                    console.log(canvasImageForMoving.src);
                     currentCtx.drawImage(canvasImageForMoving, -startX+mousex, -startY+mousey);
                     image.src=currentCanvas.toDataURL("image/png");
                     image.setAttribute('id', String('canvas' + CurrentFrameId));
@@ -528,8 +510,9 @@ function use_tool (tool,element) {
     toolButtonPushed=element;
     
     if(tooltype==='line'){
-    
+        document.getElementById('editorWithHelpCanvas').lastChild.remove();
     }
+
     if(tooltype==='rectangle'){
         document.getElementById('editorWithHelpCanvas').lastChild.remove();
     }
@@ -602,10 +585,4 @@ document.addEventListener('keydown', function (event) {
 /*_________________________________________________*/
 
 
-
-// Call login API on a click event
-document.getElementById('login').click =  function() {
-    let profile=googleUser.getBasicProfile();
-    console.log(profile.getEmail());
-};
 
